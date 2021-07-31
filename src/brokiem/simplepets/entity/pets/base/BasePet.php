@@ -18,7 +18,8 @@ abstract class BasePet extends Living {
 
     private ?string $petOwner = null;
     private ?string $petName = null;
-    private float $petSize = 1;
+    private float|int $petSize = 1;
+    private float|int $checkVal = 0;
 
     public function __construct(Location $location, ?CompoundTag $nbt = null) {
         parent::__construct($location, $nbt);
@@ -65,6 +66,22 @@ abstract class BasePet extends Living {
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
         $this->followOwner();
+
+        if ($this->checkVal <= 0) {
+            $this->checkVal = 60;
+
+            $owner = $this->getPetOwner();
+
+            if ($owner !== null) {
+                $target = SimplePets::getInstance()->getPlayerByXuid($owner);
+
+                if (($target !== null) && $this->getPosition()->distance($target->getPosition()) >= 20) {
+                    $this->teleport($target->getPosition());
+                }
+            }
+        }
+
+        --$this->checkVal;
         return parent::entityBaseTick($tickDiff);
     }
 

@@ -17,6 +17,7 @@ use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
 use pocketmine\Server;
+use pocketmine\utils\TextFormat;
 
 class Command extends \pocketmine\command\Command implements PluginOwned {
 
@@ -28,19 +29,34 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
         if (isset($args[0])) {
             switch (strtolower($args[0])) {
                 case "spawn":
+                    if (!$sender->hasPermission("simplepets.spawn")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
                     if ($sender instanceof Player) {
                         if (isset($args[2])) {
-                            SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
-                            $sender->sendMessage("Pet spawned!");
+                            if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
+                                SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
+                            } else {
+                                SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
+                            }
+
+                            $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §aas been successfully spawned");
                         } else {
-                            $sender->sendMessage("Usage: /spet spawn <petType> <petName>");
+                            $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize>");
                         }
                     } else {
-                        $sender->sendMessage("Only player can run this command");
+                        $sender->sendMessage("§cOnly player can run this command");
                     }
                     break;
                 case "remove":
                 case "delete":
+                    if (!$sender->hasPermission("simplepets.remove")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
                     if ($sender instanceof Player) {
                         if (isset($args[1])) {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
@@ -52,16 +68,23 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 }
 
                                 SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
-                                $sender->sendMessage("Pet removed!");
+                                $sender->sendMessage("§aPet with the name §b" . $args[1] . " §ahas been successfully removed");
                             } else {
-                                $sender->sendMessage("Pet with name " . $args[1] . " not found");
+                                $sender->sendMessage("§aNo pet with name §b" . $args[1] . " §afound");
                             }
                         } else {
-                            $sender->sendMessage("Usage: /spet remove <petName>");
+                            $sender->sendMessage("§cUsage: /spet remove <petName>");
                         }
                     }
                     break;
+                case "help":
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§7---- ---- ---- - ---- ---- ----");
+                    break;
+                default:
+                    $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");
             }
+        } else {
+            $sender->sendMessage("§7---- ---- [ §aSimplePets§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimplePets\nVersion " . $this->getOwningPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
         }
     }
 

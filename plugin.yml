@@ -6,3 +6,9 @@ authors: [ "broki", "brokiem", "broski" ]
 website: https://github.com/brokiem/SimplePets
 extensions:
   Core: '>=8.0'
+
+permissions:
+  simplepets.spawn:
+    default: op
+  simplepets.remove:
+    default: op

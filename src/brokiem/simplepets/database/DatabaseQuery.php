@@ -16,48 +16,28 @@ namespace brokiem\simplepets\database;
 
 interface DatabaseQuery {
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:24
-     *
      * <h3>Variables</h3>
      * - <code>:id</code> int, optional in mysql.sql
      */
     public const SIMPLEPETS_GET_VERSION = "simplepets.get-version";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:40
-     *
      * <h3>Variables</h3>
      * - <code>:petName</code> string, required in mysql.sql
      */
     public const SIMPLEPETS_GETPET = "simplepets.getpet";
 
-    /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:19
-     */
     public const SIMPLEPETS_INIT_DATA = "simplepets.init.data";
 
-    /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:9
-     */
     public const SIMPLEPETS_INIT_INFO = "simplepets.init.info";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:44
-     *
      * <h3>Variables</h3>
      * - <code>:id</code> int, required in mysql.sql
      */
     public const SIMPLEPETS_REMOVEPET = "simplepets.removepet";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:36
-     *
      * <h3>Variables</h3>
      * - <code>:petOwner</code> string, required in mysql.sql
      * - <code>:petType</code> string, required in mysql.sql
@@ -67,9 +47,6 @@ interface DatabaseQuery {
     public const SIMPLEPETS_REGISTERPET = "simplepets.registerpet";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:36
-     *
      * <h3>Variables</h3>
      * - <code>:id</code> int, required in mysql.sql
      * - <code>:petOwner</code> string, required in mysql.sql
@@ -80,9 +57,6 @@ interface DatabaseQuery {
     public const SIMPLEPETS_SAVEPET = "simplepets.savepet";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:29
-     *
      * <h3>Variables</h3>
      * - <code>:version</code> int, required in mysql.sql
      * - <code>:id</code> int, optional in mysql.sql
@@ -90,9 +64,6 @@ interface DatabaseQuery {
     public const SIMPLEPETS_SET_VERSION = "simplepets.set-version";
 
     /**
-     * <h4>Declared in:</h4>
-     * - resources/mysql.sql:29
-     *
      * <h3>Variables</h3>
      * - <code>:petOwner</code> string, required in mysql.sql
      */

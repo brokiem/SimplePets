@@ -28,14 +28,6 @@ final class SimplePets extends PluginBase {
 
     private array $players = [];
 
-    public function getDatabase(): DataConnector {
-        return $this->database;
-    }
-
-    public function getPetManager(): PetManager {
-        return $this->petManager;
-    }
-
     protected function onEnable(): void {
         self::setInstance($this);
 
@@ -68,16 +60,26 @@ final class SimplePets extends PluginBase {
         $this->databaseManager = new Database();
     }
 
-    public function getDatabaseManager(): Database {
-        return $this->databaseManager;
-    }
-
     private function initPets(): void {
         $this->petManager = new PetManager();
     }
 
+    public function getDatabase(): DataConnector {
+        return $this->database;
+    }
+
+    public function getPetManager(): PetManager {
+        return $this->petManager;
+    }
+
+    public function getDatabaseManager(): Database {
+        return $this->databaseManager;
+    }
+
     public function addPlayer(Player $player): void {
-        $this->players[$player->getXuid()] = $player->getName();
+        if (!isset($this->players[$player->getXuid()])) {
+            $this->players[$player->getXuid()] = $player->getName();
+        }
     }
 
     public function getPlayerByXuid(string $xuid): ?Player {

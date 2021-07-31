@@ -29,7 +29,7 @@ use pocketmine\world\World;
 
 final class PetManager {
 
-    private array $pet_list = [
+    private array $default_pets = [
         "GoatPet" => GoatPet::class,
         "WolfPet" => WolfPet::class
     ];
@@ -39,7 +39,7 @@ final class PetManager {
     private array $active_pets = [];
 
     public function __construct() {
-        foreach ($this->pet_list as $type => $class) {
+        foreach ($this->default_pets as $type => $class) {
             self::registerEntity($class, [$type]);
             $this->registerPet($type, $class);
         }

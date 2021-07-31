@@ -14,7 +14,6 @@ use brokiem\simplepets\entity\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\player\Player;
 use pocketmine\utils\SingletonTrait;
-use SOFe\AwaitGenerator\Await;
 
 final class Database {
     use SingletonTrait;
@@ -45,16 +44,6 @@ final class Database {
                 ]);
             }
         });
-    }
-
-    public function asyncSelect(string $query, array $args): \Generator {
-        SimplePets::getInstance()->getDatabase()->executeSelect($query, $args, yield, yield Await::REJECT);
-        return yield Await::ONCE;
-    }
-
-    public function asyncInsert(string $query, array $args): \Generator {
-        SimplePets::getInstance()->getDatabase()->executeInsert($query, $args, yield, yield Await::REJECT);
-        return yield Await::ONCE;
     }
 
     public function removePet(Player $owner, string $petName): void {

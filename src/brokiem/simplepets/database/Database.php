@@ -25,14 +25,13 @@ final class Database {
     }
 
     public function savePet(BasePet|CustomPet $pet): void {
-        Await::f2c(function() use ($pet) {
-            $rows = yield $this->asyncSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
-                "petName" => $pet->getPetName(),
-                "petOwner" => $pet->getPetOwner()
-            ]);
-
+        $db = SimplePets::getInstance()->getDatabase();
+        $db->executeSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
+            "petName" => $pet->getPetName(),
+            "petOwner" => $pet->getPetOwner()
+        ], function(array $rows) use ($pet, $db) {
             foreach ($rows as $row) {
-                yield $this->asyncInsert(DatabaseQuery::SIMPLEPETS_SAVEPET, [
+                $db->executeInsert(DatabaseQuery::SIMPLEPETS_SAVEPET, [
                     "id" => $row["id"],
                     "petType" => $pet->getPetType(),
                     "petName" => $pet->getPetName(),
@@ -55,13 +54,10 @@ final class Database {
 
     public function removePet(BasePet|CustomPet $pet): void {
         $db = SimplePets::getInstance()->getDatabase();
-
-        Await::f2c(function() use ($db, $pet) {
-            $rows = yield $this->asyncSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
-                "petName" => $pet->getPetName(),
-                "petOwner" => $pet->getPetOwner()
-            ]);
-
+        $db->executeSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
+            "petName" => $pet->getPetName(),
+            "petOwner" => $pet->getPetOwner()
+        ], function(array $rows) use ($db) {
             foreach ($rows as $row) {
                 $db->executeGeneric(DatabaseQuery::SIMPLEPETS_REMOVEPET, ["id" => $row["id"]]);
             }
@@ -80,13 +76,5 @@ final class Database {
                 SimplePets::getInstance()->getPetManager()->respawnPet($owner, $type, $name, $size);
             }
         });
-    }
-
-    public function getPetData(BasePet|CustomPet $pet, $callable): void {
-        $db = SimplePets::getInstance()->getDatabase();
-        $db->executeSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
-            "petName" => $pet->getPetName(),
-            "petOwner" => $pet->getPetOwner()
-        ], $callable);
     }
 }

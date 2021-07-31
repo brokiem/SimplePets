@@ -7,6 +7,7 @@ namespace brokiem\simplepets\database;
 use brokiem\simplepets\entity\pets\base\BasePet;
 use brokiem\simplepets\entity\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
+use pocketmine\player\Player;
 use pocketmine\utils\SingletonTrait;
 use SOFe\AwaitGenerator\Await;
 
@@ -63,6 +64,20 @@ final class Database {
 
             foreach ($rows as $row) {
                 $db->executeGeneric(DatabaseQuery::SIMPLEPETS_REMOVEPET, ["id" => $row["id"]]);
+            }
+        });
+    }
+
+    public function respawnPet(Player $owner): void {
+        SimplePets::getInstance()->getDatabase()->executeSelect(DatabaseQuery::SIMPLEPETS_GETALLPETS, [
+            "petOwner" => $owner->getXuid()
+        ], function(array $rows) use ($owner) {
+            foreach ($rows as $row) {
+                $type = $row["petType"];
+                $name = $row["petName"];
+                $size = $row["petSize"];
+
+                SimplePets::getInstance()->getPetManager()->respawnPet($owner, $type, $name, $size);
             }
         });
     }

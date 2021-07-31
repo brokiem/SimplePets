@@ -62,6 +62,12 @@ FROM simplepets_pets
 WHERE petName = :petName
   AND petOwner = :petOwner;
 -- #    }
+-- #    {getallpets
+-- #        :petOwner string
+SELECT *
+FROM simplepets_pets
+WHERE petOwner = :petOwner;
+-- #    }
 -- #    {removepet
 -- #        :id int
 DELETE

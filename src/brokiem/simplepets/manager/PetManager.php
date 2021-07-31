@@ -31,6 +31,8 @@ final class PetManager {
 
     private array $registered_pets = [];
 
+    private array $active_pets = [];
+
     public function __construct() {
         foreach ($this->pet_list as $type => $class) {
             self::registerEntity($class, [$type]);
@@ -76,15 +78,33 @@ final class PetManager {
         $nbt = $this->createBaseNBT($owner->getPosition());
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
-        $pet?->setPetOwner($owner->getXuid());
-        $pet?->setPetName($petName);
-        $pet?->setPetSize($petSize);
-
-        $pet?->spawnToAll();
-
         if ($pet !== null) {
+            $pet->setPetOwner($owner->getXuid());
+            $pet->setPetName($petName);
+            $pet->setPetSize($petSize);
+            $pet->spawnToAll();
+
+            $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
             SimplePets::getInstance()->getDatabaseManager()->registerPet($pet);
         }
+    }
+
+    public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
+        $nbt = $this->createBaseNBT($owner->getPosition());
+        $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
+
+        if ($pet !== null) {
+            $pet->setPetOwner($owner->getXuid());
+            $pet->setPetName($petName);
+            $pet->setPetSize($petSize);
+            $pet->spawnToAll();
+
+            $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
+        }
+    }
+
+    public function getActivePets(): array {
+        return $this->active_pets;
     }
 
     /**

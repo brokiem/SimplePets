@@ -84,4 +84,12 @@ interface DatabaseQuery {
      */
     public const SIMPLEPETS_SET_VERSION = "simplepets.set-version";
 
+    /**
+     * <h4>Declared in:</h4>
+     * - resources/mysql.sql:29
+     *
+     * <h3>Variables</h3>
+     * - <code>:petOwner</code> string, required in mysql.sql
+     */
+    public const SIMPLEPETS_GETALLPETS = "simplepets.getallpets";
 }

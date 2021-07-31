@@ -1,6 +1,6 @@
 <h1>SimplePets<img src="https://github.com/brokiem/SimplePets/blob/master/assets/logo-min.png" height="64" width="64" align="left" alt=""></h1><br>
 
-<b>An Ultimate Pets plugin made by brokiem for PocketMine-MP.</b><br>
+<b>An Ultimate Pets plugin made by broki for PocketMine-MP.</b><br>
 [![License](https://img.shields.io/github/license/brokiem/SimplePets)](https://github.com/brokiem/SimplePets)
 [![Star](https://img.shields.io/github/stars/brokiem/SimplePets)](https://github.com/brokiem/SimplePets/stargazers)
 [![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)

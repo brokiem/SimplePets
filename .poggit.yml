@@ -5,6 +5,7 @@ branches:
 
 projects:
   SimplePets:
+    icon: "/assets/logo.png"
     libs:
       - src: poggit/libasynql/libasynql
         version: 3.4.0

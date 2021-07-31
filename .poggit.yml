@@ -7,9 +7,9 @@ projects:
   SimplePets:
     libs:
       - src: poggit/libasynql/libasynql
-        version: 3.4.0
+        version: ^3.4.0
       - src: SOF3/await-generator/await-generator
-        version: 3.1.0
+        version: ^3.1.0
     lint:
       phpstan: false
 ...

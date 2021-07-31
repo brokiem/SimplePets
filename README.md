@@ -1,7 +1,37 @@
-# SimplePets
+<h1>SimplePets<img src="https://github.com/brokiem/SimplePets/blob/master/assets/logo-min.png" height="64" width="64" align="left" alt=""></h1><br>
 
-Pet plugin for PM4
+<b>An Ultimate Pets plugin made by brokiem for PocketMine-MP.</b><br>
+[![License](https://img.shields.io/github/license/brokiem/SimplePets)](https://github.com/brokiem/SimplePets)
+[![Star](https://img.shields.io/github/stars/brokiem/SimplePets)](https://github.com/brokiem/SimplePets/stargazers)
+[![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/brokiem)
 
-Features:
+## ✨ Features
 
-- MySQL and SQLite support
+- MySQL and SQLite database support
+- Lightweight & Open Source ❤
+
+## 💬 Commands
+
+<b>For more command info, please look directly at ```/spet help```</b><br>
+
+| Command | Description | Permission | Default |
+| --- | --- | --- | --- |
+| ```/spet``` | ```SimplePets command list``` | ```none``` | ```true``` |
+| ```/spet spawn``` | ```Spawning a pet``` | ```simplepets.spawn``` | ```op``` |
+| ```/spet remove``` | ```Removing a pet``` | ```simplepets.remove``` | ```op``` |
+
+## 📝 Todo List
+
+- Pet inventory
+- Can ride the pet
+
+## ❔ Issues
+
+Did you find a bug or error when using this plugin? feel free to open the
+issues [here](https://github.com/brokiem/SimplePets/issues/new)
+
+## 👑 Donation
+
+Paypal - https://www.paypal.me/brokiem <br>
+Saweria - https://saweria.co/brokiem

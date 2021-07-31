@@ -1,0 +1,6 @@
+api: 4.0.0
+main: brokiem/simplepets/SimplePets
+name: SimplePets
+version: 0.0.1
+authors: [ "broki", "brokiem" ]
+website: https://github.com/brokiem/SimplePets

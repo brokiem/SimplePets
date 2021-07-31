@@ -79,7 +79,7 @@ abstract class CustomPet extends Human {
         $x = $target->getLocation()->x - $this->getLocation()->x;
         $y = $target->getLocation()->y - $this->getLocation()->y;
         $z = $target->getLocation()->z - $this->getLocation()->z;
-
+        /** @noinspection RandomApiMigrationInspection */
         if ($x * $x + $z * $z < mt_rand(3, 8)) {
             $this->motion->x = 0;
             $this->motion->z = 0;

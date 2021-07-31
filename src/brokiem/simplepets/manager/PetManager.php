@@ -103,6 +103,12 @@ final class PetManager {
         }
     }
 
+    public function despawnPet(BasePet|CustomPet $pet): void {
+        if (!$pet->isFlaggedForDespawn()) {
+            $pet->flagForDespawn();
+        }
+    }
+
     public function getActivePets(): array {
         return $this->active_pets;
     }

@@ -52,11 +52,11 @@ final class Database {
         return yield Await::ONCE;
     }
 
-    public function removePet(BasePet|CustomPet $pet): void {
+    public function removePet(Player $owner, string $petName): void {
         $db = SimplePets::getInstance()->getDatabase();
         $db->executeSelect(DatabaseQuery::SIMPLEPETS_GETPET, [
-            "petName" => $pet->getPetName(),
-            "petOwner" => $pet->getPetOwner()
+            "petName" => $petName,
+            "petOwner" => $owner->getXuid()
         ], function(array $rows) use ($db) {
             foreach ($rows as $row) {
                 $db->executeGeneric(DatabaseQuery::SIMPLEPETS_REMOVEPET, ["id" => $row["id"]]);

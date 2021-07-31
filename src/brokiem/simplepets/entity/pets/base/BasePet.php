@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace brokiem\simplepets\entity\pets\base;
 
 use brokiem\simplepets\SimplePets;
-use pocketmine\block\Flowable;
 use pocketmine\entity\Living;
 use pocketmine\entity\Location;
 use pocketmine\nbt\tag\CompoundTag;
@@ -84,7 +83,7 @@ abstract class BasePet extends Living {
         $x = $target->getLocation()->x - $this->getLocation()->x;
         $y = $target->getLocation()->y - $this->getLocation()->y;
         $z = $target->getLocation()->z - $this->getLocation()->z;
-
+        /** @noinspection RandomApiMigrationInspection */
         if ($x * $x + $z * $z < mt_rand(3, 8)) {
             $this->motion->x = 0;
             $this->motion->z = 0;
@@ -100,10 +99,5 @@ abstract class BasePet extends Living {
         $this->lookAt($target->getPosition());
 
         $this->updateMovement();
-    }
-
-    public function shouldJump(): bool {
-        $pos = $this->getLocation()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-        return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
     }
 }

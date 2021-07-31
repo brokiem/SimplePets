@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\command;
 
+use brokiem\simplepets\entity\pets\base\BasePet;
+use brokiem\simplepets\entity\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginOwned;
+use pocketmine\Server;
 
 class Command extends \pocketmine\command\Command implements PluginOwned {
 
@@ -29,6 +32,28 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                         }
                     } else {
                         $sender->sendMessage("Only player can run this command");
+                    }
+                    break;
+                case "remove":
+                case "delete":
+                    if ($sender instanceof Player) {
+                        if (isset($args[1])) {
+                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
+                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
+                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+
+                                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                    SimplePets::getInstance()->getPetManager()->despawnPet($pet);
+                                }
+
+                                SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
+                                $sender->sendMessage("Pet removed!");
+                            } else {
+                                $sender->sendMessage("Pet with name " . $args[1] . " not found");
+                            }
+                        } else {
+                            $sender->sendMessage("Usage: /spet remove <petName>");
+                        }
                     }
                     break;
             }

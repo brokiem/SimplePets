@@ -8,6 +8,7 @@ use brokiem\simplepets\entity\pets\base\BasePet;
 use brokiem\simplepets\entity\pets\base\CustomPet;
 use brokiem\simplepets\entity\pets\GoatPet;
 use brokiem\simplepets\entity\pets\WolfPet;
+use brokiem\simplepets\SimplePets;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
@@ -33,7 +34,7 @@ final class PetManager {
     public function __construct() {
         foreach ($this->pet_list as $type => $class) {
             self::registerEntity($class, [$type]);
-            $this->registerPet($class);
+            $this->registerPet($type, $class);
         }
     }
 
@@ -56,14 +57,14 @@ final class PetManager {
         }
     }
 
-    public function registerPet(string $class): void {
+    public function registerPet(string $type, string $class): void {
         if (!class_exists($class)) {
             throw new \RuntimeException("Class $class not found.");
         }
 
         $refClass = new \ReflectionClass($class);
         if (is_a($class, BasePet::class, true) || is_a($class, CustomPet::class, true) and !$refClass->isAbstract()) {
-            $this->registered_pets[] = $class;
+            $this->registered_pets[$type] = $class;
         }
     }
 
@@ -75,10 +76,15 @@ final class PetManager {
         $nbt = $this->createBaseNBT($owner->getPosition());
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
+        $pet?->setPetOwner($owner->getXuid());
         $pet?->setPetName($petName);
         $pet?->setPetSize($petSize);
 
         $pet?->spawnToAll();
+
+        if ($pet !== null) {
+            SimplePets::getInstance()->getDatabaseManager()->registerPet($pet);
+        }
     }
 
     /**

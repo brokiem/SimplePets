@@ -11,12 +11,11 @@ CREATE TABLE IF NOT EXISTS simplepets_info
 -- #        {data
 CREATE TABLE IF NOT EXISTS simplepets_pets
 (
-    id       INT UNSIGNED AUTO_INCREMENT,
+    id       INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
     petType  VARCHAR(64) NOT NULL,
     petName  VARCHAR(32) NOT NULL,
     petOwner VARCHAR(32) NOT NULL,
-    petSize  FLOAT(2)    NOT NULL,
-    PRIMARY KEY (id)
+    petSize  FLOAT(2)    NOT NULL
 )
     -- #        }
 -- #    }
@@ -33,7 +32,7 @@ INSERT INTO simplepets_info (id, db_version)
 VALUES (:id, :version)
 ON DUPLICATE KEY UPDATE db_version = :version;
 -- #    }
--- #    {savepet
+-- #    {registerpet
 -- #        :petType string
 -- #        :petName string
 -- #        :petOwner string
@@ -41,11 +40,26 @@ ON DUPLICATE KEY UPDATE db_version = :version;
 INSERT INTO simplepets_pets (petType, petName, petOwner, petSize)
 VALUES (:petType, :petName, :petOwner, :petSize);
 -- #    }
+-- #    {savepet
+-- #        :id int
+-- #        :petType string
+-- #        :petName string
+-- #        :petOwner string
+-- #        :petSize float
+UPDATE simplepets_pets
+SET petType  = :petType,
+    petName  = :petName,
+    petOwner = :petOwner,
+    petSize  = :petSize
+WHERE id = :id;
+-- #    }
 -- #    {getpet
 -- #        :petName string
-SELECT id
+-- #        :petOwner string
+SELECT id, petType, petName, petOwner, petSize
 FROM simplepets_pets
-WHERE petName = :petName;
+WHERE petName = :petName
+  AND petOwner = :petOwner;
 -- #    }
 -- #    {removepet
 -- #        :id int

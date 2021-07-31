@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace brokiem\simplepets;
 
 use brokiem\simplepets\command\Command;
+use brokiem\simplepets\database\Database;
 use brokiem\simplepets\database\DatabaseQuery;
 use brokiem\simplepets\manager\PetManager;
 use pocketmine\plugin\PluginBase;
@@ -17,6 +18,7 @@ final class SimplePets extends PluginBase {
 
     private DataConnector $database;
     private PetManager $petManager;
+    private Database $databaseManager;
 
     public function getDatabase(): DataConnector {
         return $this->database;
@@ -27,6 +29,8 @@ final class SimplePets extends PluginBase {
     }
 
     protected function onEnable(): void {
+        self::setInstance($this);
+
         $this->getLogger()->debug("Registering listener");
         $this->getServer()->getPluginManager()->registerEvents(new EventListener(), $this);
 
@@ -52,6 +56,12 @@ final class SimplePets extends PluginBase {
         $this->database->executeGeneric(DatabaseQuery::SIMPLEPETS_INIT_DATA);
 
         $this->database->waitAll();
+
+        $this->databaseManager = new Database();
+    }
+
+    public function getDatabaseManager(): Database {
+        return $this->databaseManager;
     }
 
     private function initPets(): void {

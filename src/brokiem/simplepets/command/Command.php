@@ -25,7 +25,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
                             $sender->sendMessage("Pet spawned!");
                         } else {
-                            $sender->sendMessage("Usage: /spet <petType> <petName>");
+                            $sender->sendMessage("Usage: /spet spawn <petType> <petName>");
                         }
                     } else {
                         $sender->sendMessage("Only player can run this command");

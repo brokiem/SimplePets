@@ -1,2 +1,2 @@
 # SimplePets
-Pets plugin for PM4 *yes boii*
+Pet plugin for PM4

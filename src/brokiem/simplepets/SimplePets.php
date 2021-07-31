@@ -8,6 +8,7 @@ use brokiem\simplepets\command\Command;
 use brokiem\simplepets\database\Database;
 use brokiem\simplepets\database\DatabaseQuery;
 use brokiem\simplepets\manager\PetManager;
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
 use poggit\libasynql\DataConnector;
@@ -19,6 +20,8 @@ final class SimplePets extends PluginBase {
     private DataConnector $database;
     private PetManager $petManager;
     private Database $databaseManager;
+
+    private array $players = [];
 
     public function getDatabase(): DataConnector {
         return $this->database;
@@ -66,5 +69,17 @@ final class SimplePets extends PluginBase {
 
     private function initPets(): void {
         $this->petManager = new PetManager();
+    }
+
+    public function addPlayer(Player $player): void {
+        $this->players[$player->getXuid()] = $player->getName();
+    }
+
+    public function getPlayerByXuid(string $xuid): ?Player {
+        if (isset($this->players[$xuid])) {
+            return $this->getServer()->getPlayerExact($this->players[$xuid]);
+        }
+
+        return null;
     }
 }

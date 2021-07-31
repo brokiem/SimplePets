@@ -13,6 +13,7 @@ final class EventListener implements Listener {
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
 
+        SimplePets::getInstance()->addPlayer($player);
         SimplePets::getInstance()->getDatabaseManager()->respawnPet($player);
     }
 

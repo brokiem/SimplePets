@@ -42,7 +42,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
                             }
 
-                            $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §aas been successfully spawned");
+                            $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
                         } else {
                             $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize>");
                         }

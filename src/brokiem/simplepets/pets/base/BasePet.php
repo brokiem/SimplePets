@@ -7,30 +7,30 @@
 
 declare(strict_types=1);
 
-namespace brokiem\simplepets\entity\pets\base;
+namespace brokiem\simplepets\pets\base;
 
 use brokiem\simplepets\SimplePets;
-use pocketmine\block\Flowable;
-use pocketmine\entity\Human;
+use pocketmine\entity\Living;
 use pocketmine\entity\Location;
-use pocketmine\entity\Skin;
 use pocketmine\nbt\tag\CompoundTag;
 
-abstract class CustomPet extends Human {
+abstract class BasePet extends Living {
 
     private ?string $petOwner = null;
     private ?string $petName = null;
     private float|int $petSize = 1;
     private float|int $checkVal = 0;
 
-    public function __construct(Location $location, Skin $skin, ?CompoundTag $nbt = null) {
-        parent::__construct($location, $skin, $nbt);
+    public function __construct(Location $location, ?CompoundTag $nbt = null) {
+        parent::__construct($location, $nbt);
         $this->setNameTagAlwaysVisible();
         $this->setCanSaveWithChunk(false);
 
         $this->setMaxHealth(20);
         $this->setHealth(20);
     }
+
+    abstract public static function getNetworkTypeId(): string;
 
     public function getPetOwner(): ?string {
         return $this->petOwner;
@@ -56,6 +56,10 @@ abstract class CustomPet extends Human {
     public function setPetSize(float $size): void {
         $this->petSize = $size;
         $this->setScale($size);
+    }
+
+    public function getName(): string {
+        return $this->petName ?? "s_pet_no_name";
     }
 
     abstract public function getPetType(): string;
@@ -117,10 +121,5 @@ abstract class CustomPet extends Human {
         $this->lookAt($target->getPosition());
 
         $this->updateMovement();
-    }
-
-    public function shouldJump(): bool {
-        $pos = $this->getLocation()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-        return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
     }
 }

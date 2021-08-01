@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\manager;
 
-use brokiem\simplepets\entity\pets\base\BasePet;
-use brokiem\simplepets\entity\pets\base\CustomPet;
-use brokiem\simplepets\entity\pets\GoatPet;
-use brokiem\simplepets\entity\pets\WolfPet;
+use brokiem\simplepets\pets\base\BasePet;
+use brokiem\simplepets\pets\base\CustomPet;
+use brokiem\simplepets\pets\GoatPet;
+use brokiem\simplepets\pets\WolfPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;

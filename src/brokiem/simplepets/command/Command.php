@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\command;
 
-use brokiem\simplepets\entity\pets\base\BasePet;
-use brokiem\simplepets\entity\pets\base\CustomPet;
+use brokiem\simplepets\pets\base\BasePet;
+use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;

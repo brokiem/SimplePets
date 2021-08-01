@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
-namespace brokiem\simplepets\entity\pets;
+namespace brokiem\simplepets\pets;
 
-use brokiem\simplepets\entity\pets\base\BasePet;
+use brokiem\simplepets\pets\base\BasePet;
 use pocketmine\entity\EntitySizeInfo;
 use pocketmine\network\mcpe\protocol\types\entity\EntityIds;
 

@@ -76,6 +76,11 @@ final class Database {
                 $db->executeGeneric(self::SIMPLEPETS_REMOVEPET, ["id" => $row["id"]]);
             }
         });
+
+        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $owner->getXuid() . "-" . $petName . ".dat";
+        if (is_file($file)) {
+            unlink($file);
+        }
     }
 
     public function respawnPet(Player $owner): void {

@@ -11,7 +11,6 @@ namespace brokiem\simplepets;
 
 use brokiem\simplepets\command\Command;
 use brokiem\simplepets\database\Database;
-use brokiem\simplepets\database\DatabaseQuery;
 use brokiem\simplepets\manager\PetManager;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;

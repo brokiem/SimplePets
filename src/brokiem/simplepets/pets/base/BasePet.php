@@ -83,7 +83,7 @@ abstract class BasePet extends Living {
 
     public function link(Player $rider): void {
         $rider->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, true);
-        $rider->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 2, 0));
+        $rider->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, $this->getInitialSizeInfo()->getHeight() + 1, 0));
 
         $pk = new SetActorLinkPacket();
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);

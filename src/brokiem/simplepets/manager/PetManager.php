@@ -83,6 +83,7 @@ final class PetManager {
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
+            $pet->setPetName($petName);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
@@ -96,6 +97,7 @@ final class PetManager {
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
+            $pet->setPetName($petName);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();

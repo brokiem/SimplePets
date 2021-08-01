@@ -8,10 +8,10 @@
 
 ## ✨ Features
 
-- Async MySQL and SQLite database support
-- Anti sql injection, etc
+- MySQL and SQLite database
+- Anti sql injection
 - Pets with inventory
-- Pet riding
+- Pets can be ridden
 - XUID data saving
 - Lightweight & Open Source ❤
 

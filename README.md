@@ -9,6 +9,7 @@
 ## ✨ Features
 
 - MySQL and SQLite database support
+- Anti sql injection etc
 - Lightweight & Open Source ❤
 
 ## 💬 Commands

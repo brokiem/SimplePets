@@ -1,9 +1,11 @@
-api: 4.0.0
-main: brokiem\simplepets\SimplePets
 name: SimplePets
+main: brokiem\simplepets\SimplePets
 version: 0.0.1-snapshot
+api: 4.0.0
 authors: [ "broki", "brokiem", "broski" ]
+
 website: https://github.com/brokiem/SimplePets
+
 extensions:
   Core: '>=8.0'
 

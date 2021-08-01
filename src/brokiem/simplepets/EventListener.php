@@ -11,6 +11,7 @@ namespace brokiem\simplepets;
 
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -36,6 +37,14 @@ final class EventListener implements Listener {
                     unset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$petName]);
                 }
             }
+        }
+    }
+
+    public function onDamage(EntityDamageEvent $event): void {
+        $entity = $event->getEntity();
+
+        if ($entity instanceof BasePet || $entity instanceof CustomPet) {
+            $event->cancel();
         }
     }
 }

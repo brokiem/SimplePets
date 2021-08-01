@@ -13,9 +13,9 @@ database:
   mysql:
     host: 127.0.0.1
     # Avoid using the "root" user for security reasons.
-    username: simplepets
+    username: root
     password: ""
-    schema: your_schema # database
+    schema: simplepets # database
 
   # The maximum number of simultaneous SQL queries
   # Recommended: 1 for sqlite, 2 for MySQL.

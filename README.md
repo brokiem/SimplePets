@@ -11,6 +11,7 @@
 - Async MySQL and SQLite database support
 - Anti sql injection, etc
 - Pets with inventory
+- XUID data saving
 - Lightweight & Open Source ❤
 
 ## 💬 Commands

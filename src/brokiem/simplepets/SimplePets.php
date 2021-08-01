@@ -100,6 +100,12 @@ final class SimplePets extends PluginBase {
         return null;
     }
 
+    public function removePlayer(Player $player): void {
+        if (isset($this->players[$player->getXuid()])) {
+            unset($this->players[$player->getXuid()]);
+        }
+    }
+
     protected function onDisable(): void {
         foreach ($this->getServer()->getWorldManager()->getWorlds() as $world) {
             foreach ($world->getEntities() as $entity) {

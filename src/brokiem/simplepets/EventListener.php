@@ -38,6 +38,8 @@ final class EventListener implements Listener {
                 }
             }
         }
+
+        SimplePets::getInstance()->removePlayer($player);
     }
 
     public function onDamage(EntityDamageEvent $event): void {

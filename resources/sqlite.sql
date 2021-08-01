@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS simplepets_pets
     petSize    FLOAT(2)    NOT NULL,
     petBaby    BOOL        NOT NULL,
     petVisible INT         NOT NULL,
-    enableInv  INT         NOT NULL,
+    enableInv  BOOL        NOT NULL,
     extraData  VARCHAR(10000)
 )
     -- #        }
@@ -44,7 +44,7 @@ ON DUPLICATE KEY UPDATE db_version = :version;
 -- #        :petBaby bool
 -- #        :petVisible int
 -- #        :extraData ?string
--- #        :enableInv int
+-- #        :enableInv bool
 INSERT INTO simplepets_pets (petType, petName, petOwner, petSize, petBaby, petVisible, enableInv, extraData)
 VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableInv, :extraData);
 -- #    }
@@ -56,7 +56,7 @@ VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableI
 -- #        :petSize float
 -- #        :petBaby bool
 -- #        :petVisible int
--- #        :enableInv int
+-- #        :enableInv bool
 -- #        :extraData ?string
 UPDATE simplepets_pets
 SET petType    = :petType,

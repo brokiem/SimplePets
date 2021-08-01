@@ -72,10 +72,31 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
                                 $sender->sendMessage("§aPet with the name §b" . $args[1] . " §ahas been successfully removed");
                             } else {
-                                $sender->sendMessage("§aNo pet with name §b" . $args[1] . " §afound");
+                                $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);
                             }
                         } else {
                             $sender->sendMessage("§cUsage: /spet remove <petName>");
+                        }
+                    }
+                break;
+                case "inventory":
+                case "inv":
+                    if ($sender instanceof Player) {
+                        if (isset($args[1])) {
+                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
+                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
+                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+
+                                if ($pet instanceof BasePet) {
+                                    $pet->getInventoryMenu()->send($sender, $pet->getName());
+                                } elseif ($pet instanceof CustomPet) {
+                                    $sender->setCurrentWindow($pet->getInventory());
+                                }
+                            } else {
+                                $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);
+                            }
+                        } else {
+                            $sender->sendMessage("§cUsage: /spet inv <petName>");
                         }
                     }
                     break;

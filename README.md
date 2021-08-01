@@ -10,6 +10,7 @@
 
 - Async MySQL and SQLite database support
 - Anti sql injection, etc
+- Pets with inventory
 - Lightweight & Open Source ❤
 
 ## 💬 Commands
@@ -24,7 +25,6 @@
 
 ## 📝 Todo List
 
-- Pet inventory
 - Can ride the pet
 - UI/Form to manage pets
 - Renaming pets

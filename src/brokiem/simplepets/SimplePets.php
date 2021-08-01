@@ -12,6 +12,9 @@ namespace brokiem\simplepets;
 use brokiem\simplepets\command\Command;
 use brokiem\simplepets\database\Database;
 use brokiem\simplepets\manager\PetManager;
+use brokiem\simplepets\pets\base\BasePet;
+use brokiem\simplepets\pets\base\CustomPet;
+use muqsit\invmenu\InvMenuHandler;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
@@ -60,6 +63,14 @@ final class SimplePets extends PluginBase {
     }
 
     private function initPets(): void {
+        if (!is_dir($this->getDataFolder() . "pets_inventory")) {
+            mkdir($this->getDataFolder() . "pets_inventory");
+        }
+
+        if (!InvMenuHandler::isRegistered()) {
+            InvMenuHandler::register($this);
+        }
+
         $this->petManager = new PetManager();
     }
 
@@ -87,5 +98,20 @@ final class SimplePets extends PluginBase {
         }
 
         return null;
+    }
+
+    protected function onDisable(): void {
+        foreach ($this->getServer()->getWorldManager()->getWorlds() as $world) {
+            foreach ($world->getEntities() as $entity) {
+                if ($entity instanceof BasePet || $entity instanceof CustomPet) {
+                    $entity->saveNBT();
+                }
+            }
+        }
+
+        if ($this->database instanceof DataConnector) {
+            $this->database->waitAll();
+            $this->database->close();
+        }
     }
 }

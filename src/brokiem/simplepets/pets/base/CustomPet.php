@@ -23,6 +23,12 @@ abstract class CustomPet extends Human {
     private float|int $checkVal = 0;
 
     public function __construct(Location $location, Skin $skin, ?CompoundTag $nbt = null) {
+        if ($nbt instanceof CompoundTag) {
+            $this->petOwner = $nbt->getString("petOwner");
+            $this->petName = $nbt->getString("petName");
+            $this->petSize = $nbt->getInt("petSize", 1);
+        }
+
         parent::__construct($location, $skin, $nbt);
         $this->setNameTagAlwaysVisible();
         $this->setCanSaveWithChunk(false);

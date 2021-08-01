@@ -20,10 +20,12 @@ use pocketmine\entity\EntityFactory;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\TreeRoot;
 use pocketmine\player\Player;
 use pocketmine\world\World;
 
@@ -92,12 +94,10 @@ final class PetManager {
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
+        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setInt("petSize", $petSize);
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
-            $pet->setPetOwner($owner->getXuid());
-            $pet->setPetName($petName);
-            $pet->setPetSize($petSize);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
@@ -125,6 +125,23 @@ final class PetManager {
         }
 
         return false;
+    }
+
+    public function saveInventory(BasePet $pet, ListTag $petInventoryTag): void {
+        $nbt = CompoundTag::create()->setTag("PetInventory", $petInventoryTag);
+        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $pet->getPetOwner() . "-" . $pet->getName() . ".dat";
+        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($nbt)), ZLIB_ENCODING_GZIP));
+    }
+
+    public function getSavedInventory(BasePet $pet): ?CompoundTag {
+        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $pet->getPetOwner() . "-" . $pet->getName() . ".dat";
+
+        if (is_file($file)) {
+            $decompressed = @zlib_decode(file_get_contents($file));
+            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
+        }
+
+        return null;
     }
 
     /**

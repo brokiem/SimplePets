@@ -10,9 +10,14 @@ declare(strict_types=1);
 namespace brokiem\simplepets\pets\base;
 
 use brokiem\simplepets\SimplePets;
+use muqsit\invmenu\InvMenu;
+use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\entity\Living;
 use pocketmine\entity\Location;
+use pocketmine\item\Item;
+use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\ListTag;
 
 abstract class BasePet extends Living {
 
@@ -21,7 +26,15 @@ abstract class BasePet extends Living {
     private float|int $petSize = 1;
     private float|int $checkVal = 0;
 
+    private InvMenu $petInventoryMenu;
+
     public function __construct(Location $location, ?CompoundTag $nbt = null) {
+        if ($nbt instanceof CompoundTag) {
+            $this->petOwner = $nbt->getString("petOwner");
+            $this->petName = $nbt->getString("petName");
+            $this->petSize = $nbt->getInt("petSize", 1);
+        }
+
         parent::__construct($location, $nbt);
         $this->setNameTagAlwaysVisible();
         $this->setCanSaveWithChunk(false);
@@ -62,6 +75,54 @@ abstract class BasePet extends Living {
 
     public function getName(): string {
         return $this->petName ?? "s_pet_no_name";
+    }
+
+    public function getInventoryMenu(): InvMenu {
+        return $this->petInventoryMenu;
+    }
+
+    public function flagForDespawn(): void {
+        $this->saveNBT();
+
+        parent::flagForDespawn();
+    }
+
+    protected function initEntity(CompoundTag $nbt): void {
+        parent::initEntity($nbt);
+
+        $this->petInventoryMenu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST);
+
+        $petInventoryTag = SimplePets::getInstance()->getPetManager()->getSavedInventory($this);
+        if ($petInventoryTag !== null) {
+            $inv = $petInventoryTag->getListTag("PetInventory");
+            if ($inv !== null) {
+                /** @var CompoundTag $item */
+                foreach ($inv as $item) {
+                    $this->petInventoryMenu->getInventory()->setItem($item->getByte("Slot"), Item::nbtDeserialize($item));
+                }
+            }
+        }
+    }
+
+    public function saveNBT(): CompoundTag {
+        $nbt = parent::saveNBT();
+
+        if ($this->petInventoryMenu !== null) {
+            /** @var CompoundTag[] $items */
+            $items = [];
+
+            $slotCount = $this->petInventoryMenu->getInventory()->getSize();
+            for ($slot = 0; $slot < $slotCount; ++$slot) {
+                $item = $this->petInventoryMenu->getInventory()->getItem($slot);
+                if (!$item->isNull()) {
+                    $items[] = $item->nbtSerialize($slot);
+                }
+            }
+
+            SimplePets::getInstance()->getPetManager()->saveInventory($this, new ListTag($items, NBT::TAG_Compound));
+        }
+
+        return $nbt;
     }
 
     protected function entityBaseTick(int $tickDiff = 1): bool {

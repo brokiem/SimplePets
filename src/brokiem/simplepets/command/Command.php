@@ -36,13 +36,17 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
                     if ($sender instanceof Player) {
                         if (isset($args[2])) {
-                            if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
-                                SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
+                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[2]])) {
+                                $sender->sendMessage("§cYou already have a pet with the name " . $args[2]);
                             } else {
-                                SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
-                            }
+                                if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
+                                    SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
+                                } else {
+                                    SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
+                                }
 
-                            $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
+                                $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
+                            }
                         } else {
                             $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize>");
                         }

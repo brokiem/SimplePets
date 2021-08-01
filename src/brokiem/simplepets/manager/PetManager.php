@@ -118,6 +118,15 @@ final class PetManager {
         return $this->active_pets;
     }
 
+    public function removeActivePet(Player $owner, string $petName): bool {
+        if (isset($this->active_pets[$owner->getName()][$petName])) {
+            unset($this->active_pets[$owner->getName()][$petName]);
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Helper function which creates minimal NBT needed to spawn an entity.
      */

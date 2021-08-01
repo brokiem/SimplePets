@@ -67,7 +67,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                     SimplePets::getInstance()->getPetManager()->despawnPet($pet);
                                 }
 
-                                unset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]]);
+                                SimplePets::getInstance()->getPetManager()->removeActivePet($sender, $args[1]);
 
                                 SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
                                 $sender->sendMessage("§aPet with the name §b" . $args[1] . " §ahas been successfully removed");

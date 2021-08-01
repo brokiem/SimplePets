@@ -34,7 +34,7 @@ final class EventListener implements Listener {
 
                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                     SimplePets::getInstance()->getPetManager()->despawnPet($pet);
-                    unset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$petName]);
+                    SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
                 }
             }
         }

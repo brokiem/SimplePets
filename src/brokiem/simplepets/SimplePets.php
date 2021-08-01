@@ -52,8 +52,8 @@ final class SimplePets extends PluginBase {
             "mysql" => "mysql.sql"
         ]);
 
-        $this->database->executeGeneric(DatabaseQuery::SIMPLEPETS_INIT_INFO);
-        $this->database->executeGeneric(DatabaseQuery::SIMPLEPETS_INIT_DATA);
+        $this->database->executeGeneric(Database::SIMPLEPETS_INIT_INFO);
+        $this->database->executeGeneric(Database::SIMPLEPETS_INIT_DATA);
 
         $this->database->waitAll();
 

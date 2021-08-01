@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace brokiem\simplepets\pets\base;
 
 use brokiem\simplepets\SimplePets;
-use pocketmine\block\Flowable;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
@@ -31,6 +30,8 @@ abstract class CustomPet extends Human {
         $this->setMaxHealth(20);
         $this->setHealth(20);
     }
+
+    abstract public function getPetType(): string;
 
     public function getPetOwner(): ?string {
         return $this->petOwner;
@@ -57,8 +58,6 @@ abstract class CustomPet extends Human {
         $this->petSize = $size;
         $this->setScale($size);
     }
-
-    abstract public function getPetType(): string;
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
         $this->followOwner();
@@ -117,10 +116,5 @@ abstract class CustomPet extends Human {
         $this->lookAt($target->getPosition());
 
         $this->updateMovement();
-    }
-
-    public function shouldJump(): bool {
-        $pos = $this->getLocation()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-        return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
     }
 }

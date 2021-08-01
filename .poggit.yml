@@ -8,7 +8,7 @@ projects:
     icon: "/assets/logo-min.png"
     libs:
       - src: poggit/libasynql/libasynql
-        version: 3.4.0
+        version: ^3.4.0
         branch: "4.0"
     lint:
       phpstan: false

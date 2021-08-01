@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets;
 
+use brokiem\simplepets\pets\base\BasePet;
+use brokiem\simplepets\pets\base\CustomPet;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
@@ -29,8 +31,8 @@ final class EventListener implements Listener {
             foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()] as $petName => $petId) {
                 $pet = $player->getServer()->getWorldManager()->findEntity($petId);
 
-                if (($pet !== null) && !$pet->isFlaggedForDespawn()) {
-                    $pet->flagForDespawn();
+                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                    SimplePets::getInstance()->getPetManager()->despawnPet($pet);
                     unset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$petName]);
                 }
             }

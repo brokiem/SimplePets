@@ -32,6 +32,8 @@ abstract class BasePet extends Living {
 
     abstract public static function getNetworkTypeId(): string;
 
+    abstract public function getPetType(): string;
+
     public function getPetOwner(): ?string {
         return $this->petOwner;
     }
@@ -61,8 +63,6 @@ abstract class BasePet extends Living {
     public function getName(): string {
         return $this->petName ?? "s_pet_no_name";
     }
-
-    abstract public function getPetType(): string;
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
         $this->followOwner();

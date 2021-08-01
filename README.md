@@ -27,6 +27,7 @@
 - Pet inventory
 - Can ride the pet
 - UI/Form to manage pets
+- Renaming pets
 
 ## ❔ Issues
 

@@ -75,10 +75,6 @@ final class PetManager {
         }
     }
 
-    public function getRegisteredPets(): array {
-        return $this->registered_pets;
-    }
-
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
@@ -112,6 +108,10 @@ final class PetManager {
         if (!$pet->isFlaggedForDespawn()) {
             $pet->flagForDespawn();
         }
+    }
+
+    public function getRegisteredPets(): array {
+        return $this->registered_pets;
     }
 
     public function getActivePets(): array {

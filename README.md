@@ -22,6 +22,7 @@
 | ```/spet``` | ```SimplePets command list``` | ```none``` | ```true``` |
 | ```/spet spawn``` | ```Spawning a pet``` | ```simplepets.spawn``` | ```op``` |
 | ```/spet remove``` | ```Removing a pet``` | ```simplepets.remove``` | ```op``` |
+| ```/spet inv``` | ```View pet inventory``` | ```simplepets.inv``` | ```true``` |
 
 ## 📝 Todo List
 

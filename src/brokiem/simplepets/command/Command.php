@@ -81,6 +81,11 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                 break;
                 case "inventory":
                 case "inv":
+                    if (!$sender->hasPermission("simplepets.inv")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
                     if ($sender instanceof Player) {
                         if (isset($args[1])) {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
@@ -101,7 +106,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                     }
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");

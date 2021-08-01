@@ -11,15 +11,16 @@ CREATE TABLE IF NOT EXISTS simplepets_info
 -- #        {data
 CREATE TABLE IF NOT EXISTS simplepets_pets
 (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    petType    VARCHAR(64) NOT NULL,
-    petName    VARCHAR(32) NOT NULL,
-    petOwner   VARCHAR(32) NOT NULL,
-    petSize    FLOAT(2)    NOT NULL,
-    petBaby    BOOL        NOT NULL,
-    petVisible INT         NOT NULL,
-    enableInv  BOOL        NOT NULL,
-    extraData  VARCHAR(10000)
+    id           INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    petType      VARCHAR(64) NOT NULL,
+    petName      VARCHAR(32) NOT NULL,
+    petOwner     VARCHAR(32) NOT NULL,
+    petSize      FLOAT(2)    NOT NULL,
+    petBaby      BOOL        NOT NULL,
+    petVisible   INT         NOT NULL,
+    enableInv    BOOL        NOT NULL,
+    enableRiding BOOL        NOT NULL,
+    extraData    VARCHAR(10000)
 )
     -- #        }
 -- #    }
@@ -45,8 +46,10 @@ ON DUPLICATE KEY UPDATE db_version = :version;
 -- #        :petVisible int
 -- #        :extraData ?string
 -- #        :enableInv bool
-INSERT INTO simplepets_pets (petType, petName, petOwner, petSize, petBaby, petVisible, enableInv, extraData)
-VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableInv, :extraData);
+-- #        :enableRiding bool
+INSERT INTO simplepets_pets (petType, petName, petOwner, petSize, petBaby, petVisible, enableInv, enableRiding,
+                             extraData)
+VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableInv, :enableRiding, :extraData);
 -- #    }
 -- #    {savepet
 -- #        :id int
@@ -56,17 +59,19 @@ VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableI
 -- #        :petSize float
 -- #        :petBaby bool
 -- #        :petVisible int
--- #        :enableInv bool
 -- #        :extraData ?string
+-- #        :enableInv bool
+-- #        :enableRiding bool
 UPDATE simplepets_pets
-SET petType    = :petType,
-    petName    = :petName,
-    petOwner   = :petOwner,
-    petSize    = :petSize,
-    petBaby    = :petBaby,
-    petVisible = :petVisible,
-    enableInv  = :enableInv,
-    extraData  = :extraData
+SET petType      = :petType,
+    petName      = :petName,
+    petOwner     = :petOwner,
+    petSize      = :petSize,
+    petBaby      = :petBaby,
+    petVisible   = :petVisible,
+    enableInv    = :enableInv,
+    enableRiding = :enableRiding,
+    extraData    = :extraData
 WHERE id = :id;
 -- #    }
 -- #    {getpet

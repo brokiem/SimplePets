@@ -38,6 +38,7 @@ final class Database {
             "petBaby" => $pet->isBabyPet(),
             "petVisible" => $pet->getPetVisibility(),
             "enableInv" => $pet->isInvEnabled(),
+            "enableRiding" => $pet->isRidingEnabled(),
             "extraData" => null
         ]);
     }
@@ -58,6 +59,7 @@ final class Database {
                     "petBaby" => $pet->isBabyPet(),
                     "petVisible" => $pet->getPetVisibility(),
                     "enableInv" => $pet->isInvEnabled(),
+                    "enableRiding" => $pet->isRidingEnabled(),
                     "extraData" => null
                 ]);
             }
@@ -87,9 +89,10 @@ final class Database {
                 $baby = $row["petBaby"];
                 $visibility = $row["petVisible"];
                 $enableInv = $row["enableInv"];
+                $enableRiding = $row["enableRiding"];
                 $extraData = $row["extraData"];
 
-                SimplePets::getInstance()->getPetManager()->respawnPet($owner, $type, $name, $size, (bool)$baby, $visibility, (bool)$enableInv, $extraData);
+                SimplePets::getInstance()->getPetManager()->respawnPet($owner, $type, $name, $size, (bool)$baby, $visibility, (bool)$enableInv, (bool)$enableRiding, $extraData);
             }
         });
     }

@@ -37,6 +37,7 @@ abstract class CustomPet extends Human {
     private bool $petBaby = false;
     private int $petVisibility = PetManager::VISIBLE_TO_EVERYONE;
     private bool $invEnabled = true;
+    private bool $ridingEnabled = true;
     private ?string $extraData = null;
     private float|int $checkVal = 0;
 
@@ -52,6 +53,7 @@ abstract class CustomPet extends Human {
             $this->petBaby = (bool)$nbt->getInt("petBaby", 0);
             $this->petVisibility = $nbt->getInt("petVisibility", PetManager::VISIBLE_TO_EVERYONE);
             $this->invEnabled = (bool)$nbt->getInt("invEnabled", 1);
+            $this->ridingEnabled = (bool)$nbt->getInt("ridingEnabled", 1);
             $this->extraData = $nbt->getString("extraData") === "" ? null : $nbt->getString("extraData");
         }
 
@@ -135,6 +137,14 @@ abstract class CustomPet extends Human {
 
     public function isInvEnabled(): bool {
         return $this->invEnabled;
+    }
+
+    public function setRidingEnabled(bool $val): void {
+        $this->ridingEnabled = $val;
+    }
+
+    public function isRidingEnabled(): bool {
+        return $this->ridingEnabled;
     }
 
     public function getPetExtraData(): ?string {

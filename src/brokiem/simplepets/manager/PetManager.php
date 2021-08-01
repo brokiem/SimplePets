@@ -79,7 +79,7 @@ final class PetManager {
         }
     }
 
-    public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, ?string $extraData = "null"): void {
+    public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
@@ -87,6 +87,7 @@ final class PetManager {
             ->setInt("petBaby", (int)$petBaby)
             ->setInt("petVisibility", $petVis)
             ->setInt("invEnabled", (int)$enableInv)
+            ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
@@ -101,7 +102,7 @@ final class PetManager {
         }
     }
 
-    public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, ?string $extraData = "null"): void {
+    public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
@@ -109,6 +110,7 @@ final class PetManager {
             ->setInt("petBaby", (int)$petBaby)
             ->setInt("petVisibility", $petVis)
             ->setInt("invEnabled", (int)$enableInv)
+            ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 

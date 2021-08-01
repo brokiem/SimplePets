@@ -131,7 +131,11 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                                    $pet->link($sender);
+                                    if ($pet->isRidingEnabled()) {
+                                        $pet->link($sender);
+                                    } else {
+                                        $sender->sendMessage("§cRiding access to your pet named §4" . $pet->getName() . " §cis disabled");
+                                    }
                                 }
                             } else {
                                 $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);

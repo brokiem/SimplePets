@@ -16,3 +16,5 @@ permissions:
     default: op
   simplepets.inv:
     default: true
+  simplepets.ride:
+    default: true

@@ -11,6 +11,7 @@
 - Async MySQL and SQLite database support
 - Anti sql injection, etc
 - Pets with inventory
+- Pet riding
 - XUID data saving
 - Lightweight & Open Source ❤
 
@@ -24,10 +25,10 @@
 | ```/spet spawn``` | ```Spawning a pet``` | ```simplepets.spawn``` | ```op``` |
 | ```/spet remove``` | ```Removing a pet``` | ```simplepets.remove``` | ```op``` |
 | ```/spet inv``` | ```View pet inventory``` | ```simplepets.inv``` | ```true``` |
+| ```/spet ride``` | ```Ride a pet``` | ```simplepets.ride``` | ```true``` |
 
 ## 📝 Todo List
 
-- Can ride the pet
 - UI/Form to manage pets
 - Renaming pets
 

@@ -15,9 +15,15 @@ use muqsit\invmenu\type\InvMenuTypeIds;
 use pocketmine\entity\Living;
 use pocketmine\entity\Location;
 use pocketmine\item\Item;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
+use pocketmine\network\mcpe\protocol\types\entity\EntityLink;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
+use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
+use pocketmine\player\Player;
 
 abstract class BasePet extends Living {
 
@@ -26,13 +32,15 @@ abstract class BasePet extends Living {
     private float|int $petSize = 1;
     private float|int $checkVal = 0;
 
+    private ?string $rider = null;
+
     private InvMenu $petInventoryMenu;
 
     public function __construct(Location $location, ?CompoundTag $nbt = null) {
         if ($nbt instanceof CompoundTag) {
             $this->petOwner = $nbt->getString("petOwner");
             $this->petName = $nbt->getString("petName");
-            $this->petSize = $nbt->getInt("petSize", 1);
+            $this->petSize = $nbt->getFloat("petSize", 1);
         }
 
         parent::__construct($location, $nbt);
@@ -73,12 +81,82 @@ abstract class BasePet extends Living {
         $this->setScale($size);
     }
 
+    public function link(Player $rider): void {
+        $rider->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, true);
+        $rider->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 2, 0));
+
+        $pk = new SetActorLinkPacket();
+        $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);
+        $rider->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+
+        SimplePets::getInstance()->getPetManager()->addRiddenPet($rider, $this);
+        $this->rider = $rider->getXuid();
+    }
+
+    public function unlink(): void {
+        if ($this->rider !== null) {
+            if ($this->getRider() !== null) {
+                $this->getRider()->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, false);
+                $this->getRider()->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 0, 0));
+
+                $pk = new SetActorLinkPacket();
+                $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
+                $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+            }
+
+            $this->rider = null;
+        }
+    }
+
+    public function getRider(): ?Player {
+        return SimplePets::getInstance()->getPlayerByXuid($this->rider);
+    }
+
     public function getName(): string {
         return $this->petName ?? "s_pet_no_name";
     }
 
     public function getInventoryMenu(): InvMenu {
         return $this->petInventoryMenu;
+    }
+
+    // hehe thx blockpet
+    public function walk(float $motionX, float $motionZ, Player $rider): void {
+        $this->setRotation($rider->getLocation()->yaw, $rider->getLocation()->pitch);
+
+        $direction_plane = $this->getDirectionPlane();
+        $x = $direction_plane->x / 2.5;
+        $z = $direction_plane->y / 2.5;
+
+        switch ($motionZ) {
+            case 1:
+                $finalMotionX = $x;
+                $finalMotionZ = $z;
+                break;
+            case -1:
+                $finalMotionX = -$x;
+                $finalMotionZ = -$z;
+                break;
+            default:
+                $average = $x + $z / 2;
+                $finalMotionX = $average / 1.414 * $motionZ;
+                $finalMotionZ = $average / 1.414 * $motionX;
+                break;
+        }
+
+        switch ($motionX) {
+            case 1:
+                $finalMotionX = $z;
+                $finalMotionZ = -$x;
+                break;
+            case -1:
+                $finalMotionX = -$z;
+                $finalMotionZ = $x;
+                break;
+        }
+
+        $this->move($finalMotionX, $this->motion->y, $finalMotionZ);
+        $this->updateMovement();
     }
 
     public function flagForDespawn(): void {
@@ -126,6 +204,10 @@ abstract class BasePet extends Living {
     }
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
+        if ($this->rider !== null) {
+            return parent::entityBaseTick($tickDiff);
+        }
+
         $this->followOwner();
 
         if ($this->checkVal <= 0) {

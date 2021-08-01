@@ -15,6 +15,9 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\InteractPacket;
+use pocketmine\network\mcpe\protocol\PlayerInputPacket;
 
 final class EventListener implements Listener {
 
@@ -47,6 +50,31 @@ final class EventListener implements Listener {
 
         if ($entity instanceof BasePet || $entity instanceof CustomPet) {
             $event->cancel();
+        }
+    }
+
+    public function onDataPacket(DataPacketReceiveEvent $event): void {
+        $packet = $event->getPacket();
+        $player = $event->getOrigin()->getPlayer();
+
+        if ($player === null) {
+            return;
+        }
+
+        if ($packet instanceof PlayerInputPacket) {
+            $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+
+            $pet?->walk($packet->motionX, $packet->motionY, $player);
+        } elseif ($packet instanceof InteractPacket) {
+            if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {
+                $entity = $player->getServer()->getWorldManager()->findEntity($packet->target);
+
+                if ($entity instanceof BasePet || $entity instanceof CustomPet) {
+                    if ($entity->getRider()->getXuid() === $player->getXuid()) {
+                        $entity->unlink();
+                    }
+                }
+            }
         }
     }
 }

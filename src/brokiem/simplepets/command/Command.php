@@ -108,9 +108,32 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             $sender->sendMessage("§cUsage: /spet inv <petName>");
                         }
                     }
+                break;
+                case "ride":
+                    if (!$sender->hasPermission("simplepets.ride")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
+                    if ($sender instanceof Player) {
+                        if (isset($args[1])) {
+                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
+                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
+                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+
+                                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                    $pet->link($sender);
+                                }
+                            } else {
+                                $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);
+                            }
+                        } else {
+                            $sender->sendMessage("§cUsage: /spet ride <petName>");
+                        }
+                    }
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§2» /spet ride <petName>\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");

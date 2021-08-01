@@ -37,8 +37,8 @@ final class PetManager {
     ];
 
     private array $registered_pets = [];
-
     private array $active_pets = [];
+    private array $ridden_pet = [];
 
     public function __construct() {
         foreach ($this->default_pets as $type => $class) {
@@ -79,12 +79,10 @@ final class PetManager {
 
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
+        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setFloat("petSize", $petSize);
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
-            $pet->setPetOwner($owner->getXuid());
-            $pet->setPetName($petName);
-            $pet->setPetSize($petSize);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
@@ -94,7 +92,7 @@ final class PetManager {
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
-        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setInt("petSize", $petSize);
+        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setFloat("petSize", $petSize);
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
@@ -110,12 +108,24 @@ final class PetManager {
         }
     }
 
+    public function addRiddenPet(Player $owner, BasePet|CustomPet $pet): void {
+        $this->ridden_pet[$owner->getName()] = $pet;
+    }
+
     public function getRegisteredPets(): array {
         return $this->registered_pets;
     }
 
     public function getActivePets(): array {
         return $this->active_pets;
+    }
+
+    public function getRiddenPet(Player $owner): null|BasePet|CustomPet {
+        return $this->ridden_pet[$owner->getName()];
+    }
+
+    public function removeRiddenPet(Player $owner, BasePet|CustomPet $pet): void {
+        $this->ridden_pet[$owner->getName()] = $pet;
     }
 
     public function removeActivePet(Player $owner, string $petName): bool {

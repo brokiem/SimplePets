@@ -39,16 +39,24 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[2]])) {
                                 $sender->sendMessage("§cYou already have a pet with the name " . $args[2]);
                             } else {
-                                if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
-                                    SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
-                                } else {
-                                    SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
-                                }
+                                if (isset(SimplePets::getInstance()->getPetManager()->getRegisteredPets()[$args[1]])) {
+                                    if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
+                                        if (isset($args[4]) && is_bool($args[4])) {
+                                            SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3], (bool)$args[4]);
+                                        } else {
+                                            SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
+                                        }
+                                    } else {
+                                        SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
+                                    }
 
-                                $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
+                                    $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
+                                } else {
+                                    $sender->sendMessage("§cPet with type §4" . $args[1] . " §cis not registered");
+                                }
                             }
                         } else {
-                            $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize>");
+                            $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize> <petBaby>");
                         }
                     } else {
                         $sender->sendMessage("§cOnly player can run this command");
@@ -68,11 +76,10 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                                    SimplePets::getInstance()->getPetManager()->despawnPet($pet);
+                                    $pet->despawn();
                                 }
 
                                 SimplePets::getInstance()->getPetManager()->removeActivePet($sender, $args[1]);
-
                                 SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
                                 $sender->sendMessage("§aPet with the name §b" . $args[1] . " §ahas been successfully removed");
                             } else {
@@ -96,10 +103,12 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
                                 $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
-                                if ($pet instanceof BasePet) {
-                                    $pet->getInventoryMenu()->send($sender, $pet->getName());
-                                } elseif ($pet instanceof CustomPet) {
-                                    $sender->setCurrentWindow($pet->getInventory());
+                                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                    if ($pet->isInvEnabled()) {
+                                        $pet->getInventoryMenu()->send($sender, $pet->getName());
+                                    } else {
+                                        $sender->sendMessage("§cInventory access to your pet named §4" . $pet->getName() . " §cis disabled");
+                                    }
                                 }
                             } else {
                                 $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);

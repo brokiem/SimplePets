@@ -11,11 +11,15 @@ CREATE TABLE IF NOT EXISTS simplepets_info
 -- #        {data
 CREATE TABLE IF NOT EXISTS simplepets_pets
 (
-    id       INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
-    petType  VARCHAR(64) NOT NULL,
-    petName  VARCHAR(32) NOT NULL,
-    petOwner VARCHAR(32) NOT NULL,
-    petSize  FLOAT(2)    NOT NULL
+    id         INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+    petType    VARCHAR(64) NOT NULL,
+    petName    VARCHAR(32) NOT NULL,
+    petOwner   VARCHAR(32) NOT NULL,
+    petSize    FLOAT(2)    NOT NULL,
+    petBaby    BOOL        NOT NULL,
+    petVisible INT         NOT NULL,
+    enableInv  INT         NOT NULL,
+    extraData  VARCHAR(10000)
 )
     -- #        }
 -- #    }
@@ -37,8 +41,12 @@ ON DUPLICATE KEY UPDATE db_version = :version;
 -- #        :petName string
 -- #        :petOwner string
 -- #        :petSize float
-INSERT INTO simplepets_pets (petType, petName, petOwner, petSize)
-VALUES (:petType, :petName, :petOwner, :petSize);
+-- #        :petBaby bool
+-- #        :petVisible int
+-- #        :extraData ?string
+-- #        :enableInv int
+INSERT INTO simplepets_pets (petType, petName, petOwner, petSize, petBaby, petVisible, enableInv, extraData)
+VALUES (:petType, :petName, :petOwner, :petSize, :petBaby, :petVisible, :enableInv, :extraData);
 -- #    }
 -- #    {savepet
 -- #        :id int
@@ -46,17 +54,25 @@ VALUES (:petType, :petName, :petOwner, :petSize);
 -- #        :petName string
 -- #        :petOwner string
 -- #        :petSize float
+-- #        :petBaby bool
+-- #        :petVisible int
+-- #        :enableInv int
+-- #        :extraData ?string
 UPDATE simplepets_pets
-SET petType  = :petType,
-    petName  = :petName,
-    petOwner = :petOwner,
-    petSize  = :petSize
+SET petType    = :petType,
+    petName    = :petName,
+    petOwner   = :petOwner,
+    petSize    = :petSize,
+    petBaby    = :petBaby,
+    petVisible = :petVisible,
+    enableInv  = :enableInv,
+    extraData  = :extraData
 WHERE id = :id;
 -- #    }
 -- #    {getpet
 -- #        :petName string
 -- #        :petOwner string
-SELECT id, petType, petName, petOwner, petSize
+SELECT *
 FROM simplepets_pets
 WHERE petName = :petName
   AND petOwner = :petOwner;

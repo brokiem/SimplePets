@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\pets\base;
 
+use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\type\InvMenuTypeIds;
@@ -16,9 +17,11 @@ use pocketmine\entity\Living;
 use pocketmine\entity\Location;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\TreeRoot;
 use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
 use pocketmine\network\mcpe\protocol\types\entity\EntityLink;
 use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
@@ -30,6 +33,10 @@ abstract class BasePet extends Living {
     private ?string $petOwner = null;
     private ?string $petName = null;
     private float|int $petSize = 1;
+    private bool $petBaby = false;
+    private int $petVisibility = PetManager::VISIBLE_TO_EVERYONE;
+    private bool $invEnabled = true;
+    private ?string $extraData = null;
     private float|int $checkVal = 0;
 
     private ?string $rider = null;
@@ -41,6 +48,10 @@ abstract class BasePet extends Living {
             $this->petOwner = $nbt->getString("petOwner");
             $this->petName = $nbt->getString("petName");
             $this->petSize = $nbt->getFloat("petSize", 1);
+            $this->petBaby = (bool)$nbt->getInt("petBaby", 0);
+            $this->petVisibility = $nbt->getInt("petVisibility", PetManager::VISIBLE_TO_EVERYONE);
+            $this->invEnabled = (bool)$nbt->getInt("invEnabled", 1);
+            $this->extraData = $nbt->getString("extraData") === "" ? null : $nbt->getString("extraData");
         }
 
         parent::__construct($location, $nbt);
@@ -81,6 +92,56 @@ abstract class BasePet extends Living {
         $this->setScale($size);
     }
 
+    public function setPetBaby(bool $val): void {
+        $this->petBaby = $val;
+
+        $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::BABY, $val);
+    }
+
+    public function isBabyPet(): bool {
+        return $this->petBaby;
+    }
+
+    public function setPetVisibility(int $val): void {
+        $this->petVisibility = $val;
+
+        switch ($val) {
+            case PetManager::VISIBLE_TO_EVERYONE:
+                $this->despawnFromAll();
+                $this->spawnToAll();
+                break;
+            case PetManager::VISIBLE_TO_OWNER:
+                if ($this->getPetOwner() !== null) {
+                    $owner = SimplePets::getInstance()->getPlayerByXuid($this->getPetOwner());
+
+                    if ($owner !== null) {
+                        $this->despawnFromAll();
+                        $this->spawnTo($owner);
+                    }
+                }
+                break;
+            case PetManager::INVISIBLE_TO_EVERYONE:
+                $this->despawnFromAll();
+                break;
+        }
+    }
+
+    public function getPetVisibility(): int {
+        return $this->petVisibility;
+    }
+
+    public function setInvEnabled(bool $val): void {
+        $this->invEnabled = $val;
+    }
+
+    public function isInvEnabled(): bool {
+        return $this->invEnabled;
+    }
+
+    public function getPetExtraData(): ?string {
+        return $this->extraData;
+    }
+
     public function link(Player $rider): void {
         $rider->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, true);
         $rider->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, $this->getInitialSizeInfo()->getHeight() + 1, 0));
@@ -102,6 +163,8 @@ abstract class BasePet extends Living {
                 $pk = new SetActorLinkPacket();
                 $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
                 $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+
+                SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider(), $this);
             }
 
             $this->rider = null;
@@ -118,6 +181,29 @@ abstract class BasePet extends Living {
 
     public function getInventoryMenu(): InvMenu {
         return $this->petInventoryMenu;
+    }
+
+    public function despawn(): void {
+        if (!$this->isFlaggedForDespawn()) {
+            $this->flagForDespawn();
+        }
+    }
+
+    public function saveInventory(ListTag $petInventoryTag): void {
+        $nbt = CompoundTag::create()->setTag("PetInventory", $petInventoryTag);
+        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $this->getPetOwner() . "-" . $this->getName() . ".dat";
+        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($nbt)), ZLIB_ENCODING_GZIP));
+    }
+
+    public function getSavedInventory(): ?CompoundTag {
+        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $this->getPetOwner() . "-" . $this->getName() . ".dat";
+
+        if (is_file($file)) {
+            $decompressed = @zlib_decode(file_get_contents($file));
+            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
+        }
+
+        return null;
     }
 
     // hehe thx blockpet
@@ -170,7 +256,7 @@ abstract class BasePet extends Living {
 
         $this->petInventoryMenu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST);
 
-        $petInventoryTag = SimplePets::getInstance()->getPetManager()->getSavedInventory($this);
+        $petInventoryTag = $this->getSavedInventory();
         if ($petInventoryTag !== null) {
             $inv = $petInventoryTag->getListTag("PetInventory");
             if ($inv !== null) {
@@ -197,7 +283,7 @@ abstract class BasePet extends Living {
                 }
             }
 
-            SimplePets::getInstance()->getPetManager()->saveInventory($this, new ListTag($items, NBT::TAG_Compound));
+            $this->saveInventory(new ListTag($items, NBT::TAG_Compound));
         }
 
         return $nbt;

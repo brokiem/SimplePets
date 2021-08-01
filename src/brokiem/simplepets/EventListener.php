@@ -36,7 +36,7 @@ final class EventListener implements Listener {
                 $pet = $player->getServer()->getWorldManager()->findEntity($petId);
 
                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                    SimplePets::getInstance()->getPetManager()->despawnPet($pet);
+                    $pet->despawn();
                     SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
                 }
             }
@@ -63,7 +63,6 @@ final class EventListener implements Listener {
 
         if ($packet instanceof PlayerInputPacket) {
             $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
-
             $pet?->walk($packet->motionX, $packet->motionY, $player);
         } elseif ($packet instanceof InteractPacket) {
             if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {

@@ -20,12 +20,10 @@ use pocketmine\entity\EntityFactory;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\player\Player;
 use pocketmine\world\World;
 
@@ -39,6 +37,10 @@ final class PetManager {
     private array $registered_pets = [];
     private array $active_pets = [];
     private array $ridden_pet = [];
+
+    public const VISIBLE_TO_EVERYONE = 0;
+    public const VISIBLE_TO_OWNER = 1;
+    public const INVISIBLE_TO_EVERYONE = 3;
 
     public function __construct() {
         foreach ($this->default_pets as $type => $class) {
@@ -77,13 +79,21 @@ final class PetManager {
         }
     }
 
-    public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
+    public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, ?string $extraData = "null"): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
-        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setFloat("petSize", $petSize);
+        $nbt->setString("petOwner", $owner->getXuid())
+            ->setString("petName", $petName)
+            ->setFloat("petSize", $petSize)
+            ->setInt("petBaby", (int)$petBaby)
+            ->setInt("petVisibility", $petVis)
+            ->setInt("invEnabled", (int)$enableInv)
+            ->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
             $pet->setPetName($petName);
+            $pet->setPetBaby($petBaby);
+            $pet->setPetVisibility($petVis);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
@@ -91,22 +101,24 @@ final class PetManager {
         }
     }
 
-    public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1): void {
+    public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, ?string $extraData = "null"): void {
         $nbt = $this->createBaseNBT($owner->getPosition());
-        $nbt->setString("petOwner", $owner->getXuid())->setString("petName", $petName)->setFloat("petSize", $petSize);
+        $nbt->setString("petOwner", $owner->getXuid())
+            ->setString("petName", $petName)
+            ->setFloat("petSize", $petSize)
+            ->setInt("petBaby", (int)$petBaby)
+            ->setInt("petVisibility", $petVis)
+            ->setInt("invEnabled", (int)$enableInv)
+            ->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
             $pet->setPetName($petName);
+            $pet->setPetBaby($petBaby);
+            $pet->setPetVisibility($petVis);
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
-        }
-    }
-
-    public function despawnPet(BasePet|CustomPet $pet): void {
-        if (!$pet->isFlaggedForDespawn()) {
-            $pet->flagForDespawn();
         }
     }
 
@@ -137,23 +149,6 @@ final class PetManager {
         }
 
         return false;
-    }
-
-    public function saveInventory(BasePet $pet, ListTag $petInventoryTag): void {
-        $nbt = CompoundTag::create()->setTag("PetInventory", $petInventoryTag);
-        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $pet->getPetOwner() . "-" . $pet->getName() . ".dat";
-        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($nbt)), ZLIB_ENCODING_GZIP));
-    }
-
-    public function getSavedInventory(BasePet $pet): ?CompoundTag {
-        $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $pet->getPetOwner() . "-" . $pet->getName() . ".dat";
-
-        if (is_file($file)) {
-            $decompressed = @zlib_decode(file_get_contents($file));
-            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
-        }
-
-        return null;
     }
 
     /**

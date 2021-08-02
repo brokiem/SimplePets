@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS simplepets_pets
     petVisible   INT         NOT NULL,
     enableInv    BOOL        NOT NULL,
     enableRiding BOOL        NOT NULL,
-    extraData    VARCHAR(10000),
+    extraData    TEXT,
     PRIMARY KEY (id)
 )
     -- #        }

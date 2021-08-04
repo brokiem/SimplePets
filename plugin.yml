@@ -1,6 +1,6 @@
 name: SimplePets
 main: brokiem\simplepets\SimplePets
-version: 0.0.1-snapshot
+version: 0.0.2-snapshot
 api: 4.0.0
 authors: [ "broki", "brokiem", "broski" ]
 

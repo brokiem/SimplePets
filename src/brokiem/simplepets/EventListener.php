@@ -19,7 +19,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\PlayerInputPacket;
-use pocketmine\player\Player;
+use pocketmine\Player;
 
 final class EventListener implements Listener {
 
@@ -35,7 +35,7 @@ final class EventListener implements Listener {
 
         if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()])) {
             foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()] as $petName => $petId) {
-                $pet = $player->getServer()->getWorldManager()->findEntity($petId);
+                $pet = $player->getServer()->findEntity($petId);
 
                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                     $pet->despawn();
@@ -51,24 +51,20 @@ final class EventListener implements Listener {
         $entity = $event->getEntity();
 
         if ($entity instanceof BasePet || $entity instanceof CustomPet) {
-            $event->cancel();
+            $event->setCancelled();
         }
     }
 
     public function onDataPacket(DataPacketReceiveEvent $event): void {
         $packet = $event->getPacket();
-        $player = $event->getOrigin()->getPlayer();
-
-        if ($player === null) {
-            return;
-        }
+        $player = $event->getPlayer();
 
         if ($packet instanceof PlayerInputPacket) {
             $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
             $pet?->walk($packet->motionX, $packet->motionY, $player);
         } elseif ($packet instanceof InteractPacket) {
             if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {
-                $entity = $player->getServer()->getWorldManager()->findEntity($packet->target);
+                $entity = $player->getServer()->findEntity($packet->target);
 
                 if ($entity instanceof BasePet || $entity instanceof CustomPet) {
                     if ($entity->getRider()->getXuid() === $player->getXuid()) {
@@ -85,7 +81,7 @@ final class EventListener implements Listener {
         if ($entity instanceof Player) {
             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
                 foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
-                    $pet = $entity->getServer()->getWorldManager()->findEntity($petId);
+                    $pet = $entity->getServer()->findEntity($petId);
 
                     if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                         $pet->teleport($entity->getLocation());

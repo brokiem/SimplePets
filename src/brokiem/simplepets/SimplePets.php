@@ -15,7 +15,7 @@ use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use muqsit\invmenu\InvMenuHandler;
-use pocketmine\player\Player;
+use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
 use poggit\libasynql\DataConnector;
@@ -30,7 +30,7 @@ final class SimplePets extends PluginBase {
 
     private array $players = [];
 
-    protected function onEnable(): void {
+    public function onEnable(): void {
         self::setInstance($this);
 
         $this->getLogger()->debug("Registering listener");
@@ -106,8 +106,8 @@ final class SimplePets extends PluginBase {
         }
     }
 
-    protected function onDisable(): void {
-        foreach ($this->getServer()->getWorldManager()->getWorlds() as $world) {
+    public function onDisable(): void {
+        foreach ($this->getServer()->getLevels() as $world) {
             foreach ($world->getEntities() as $entity) {
                 if ($entity instanceof BasePet || $entity instanceof CustomPet) {
                     $entity->saveNBT();

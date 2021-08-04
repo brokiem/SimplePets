@@ -12,22 +12,17 @@ namespace brokiem\simplepets\pets\base;
 use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
-use muqsit\invmenu\type\InvMenuTypeIds;
+use muqsit\invmenu\MenuIds;
 use pocketmine\entity\Human;
-use pocketmine\entity\Location;
-use pocketmine\entity\Skin;
 use pocketmine\item\Item;
+use pocketmine\level\Location;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\LittleEndianNbtSerializer;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\TreeRoot;
 use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
-use pocketmine\network\mcpe\protocol\types\entity\EntityLink;
-use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataFlags;
-use pocketmine\network\mcpe\protocol\types\entity\EntityMetadataProperties;
-use pocketmine\player\Player;
+use pocketmine\network\mcpe\protocol\types\EntityLink;
+use pocketmine\Player;
 
 abstract class CustomPet extends Human {
 
@@ -45,7 +40,7 @@ abstract class CustomPet extends Human {
 
     private ?string $rider = null;
 
-    public function __construct(Location $location, Skin $skin, ?CompoundTag $nbt = null) {
+    public function __construct(Location $location, ?CompoundTag $nbt = null) {
         if ($nbt instanceof CompoundTag) {
             $this->petOwner = $nbt->getString("petOwner");
             $this->petName = $nbt->getString("petName");
@@ -57,7 +52,8 @@ abstract class CustomPet extends Human {
             $this->extraData = $nbt->getString("extraData") === "" ? null : $nbt->getString("extraData");
         }
 
-        parent::__construct($location, $skin, $nbt);
+        parent::__construct($location->getLevel(), $nbt);
+
         $this->setNameTagAlwaysVisible();
         $this->setCanSaveWithChunk(false);
 
@@ -161,7 +157,7 @@ abstract class CustomPet extends Human {
 
         $pk = new SetActorLinkPacket();
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);
-        $rider->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+        $rider->getServer()->broadcastPacket($this->getViewers(), $pk);
 
         SimplePets::getInstance()->getPetManager()->addRiddenPet($rider, $this);
         $this->rider = $rider->getXuid();
@@ -175,7 +171,7 @@ abstract class CustomPet extends Human {
 
                 $pk = new SetActorLinkPacket();
                 $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
-                $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+                $this->getRider()->getServer()->broadcastPacket($this->getViewers(), $pk);
 
                 SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider(), $this);
             }
@@ -249,10 +245,10 @@ abstract class CustomPet extends Human {
         $this->updateMovement();
     }
 
-    protected function initEntity(CompoundTag $nbt): void {
-        parent::initEntity($nbt);
+    protected function initEntity(): void {
+        parent::initEntity();
 
-        $this->petInventoryMenu = InvMenu::create(InvMenuTypeIds::TYPE_CHEST);
+        $this->petInventoryMenu = InvMenu::create(MenuIds::TYPE_CHEST);
 
         $petInventoryTag = $this->getSavedInventory();
         if ($petInventoryTag !== null) {
@@ -266,9 +262,7 @@ abstract class CustomPet extends Human {
         }
     }
 
-    public function saveNBT(): CompoundTag {
-        $nbt = parent::saveNBT();
-
+    public function saveNBT(): void {
         if ($this->petInventoryMenu !== null) {
             /** @var CompoundTag[] $items */
             $items = [];
@@ -283,11 +277,9 @@ abstract class CustomPet extends Human {
 
             $this->saveInventory(new ListTag($items, NBT::TAG_Compound));
         }
-
-        return $nbt;
     }
 
-    protected function entityBaseTick(int $tickDiff = 1): bool {
+    public function entityBaseTick(int $tickDiff = 1): bool {
         if ($this->rider !== null) {
             return parent::entityBaseTick($tickDiff);
         }

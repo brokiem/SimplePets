@@ -18,14 +18,9 @@ use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
 use pocketmine\entity\Human;
-use pocketmine\entity\Location;
-use pocketmine\math\Vector3;
+use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\player\Player;
-use pocketmine\world\World;
+use pocketmine\Player;
 
 final class PetManager {
 
@@ -80,7 +75,7 @@ final class PetManager {
     }
 
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
-        $nbt = $this->createBaseNBT($owner->getPosition());
+        $nbt = Entity::createBaseNBT($owner->getPosition());
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
             ->setFloat("petSize", $petSize)
@@ -103,7 +98,7 @@ final class PetManager {
     }
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
-        $nbt = $this->createBaseNBT($owner->getPosition());
+        $nbt = Entity::createBaseNBT($owner->getPosition());
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
             ->setFloat("petSize", $petSize)
@@ -151,27 +146,6 @@ final class PetManager {
         }
 
         return false;
-    }
-
-    /**
-     * Helper function which creates minimal NBT needed to spawn an entity.
-     */
-    public function createBaseNBT(Vector3 $pos, ?Vector3 $motion = null, float $yaw = 0.0, float $pitch = 0.0): CompoundTag {
-        return CompoundTag::create()
-            ->setTag("Pos", new ListTag([
-                new DoubleTag($pos->x),
-                new DoubleTag($pos->y),
-                new DoubleTag($pos->z)
-            ]))
-            ->setTag("Motion", new ListTag([
-                new DoubleTag($motion !== null ? $motion->x : 0.0),
-                new DoubleTag($motion !== null ? $motion->y : 0.0),
-                new DoubleTag($motion !== null ? $motion->z : 0.0)
-            ]))
-            ->setTag("Rotation", new ListTag([
-                new FloatTag($yaw),
-                new FloatTag($pitch)
-            ]));
     }
 
     public function createEntity(string $type, Location $location, CompoundTag $nbt): null|BasePet|CustomPet {

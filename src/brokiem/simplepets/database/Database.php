@@ -12,7 +12,7 @@ namespace brokiem\simplepets\database;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
-use pocketmine\player\Player;
+use pocketmine\Player;
 use pocketmine\utils\SingletonTrait;
 
 final class Database {

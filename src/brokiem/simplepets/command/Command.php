@@ -13,13 +13,13 @@ use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\command\CommandSender;
-use pocketmine\player\Player;
+use pocketmine\command\PluginIdentifiableCommand;
+use pocketmine\Player;
 use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginOwned;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
-class Command extends \pocketmine\command\Command implements PluginOwned {
+class Command extends \pocketmine\command\Command implements PluginIdentifiableCommand {
 
     public function execute(CommandSender $sender, string $commandLabel, array $args) {
         if (!$this->testPermission($sender)) {
@@ -73,7 +73,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                         if (isset($args[1])) {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
                                 $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
-                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+                                $pet = Server::getInstance()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                                     $pet->despawn();
@@ -101,7 +101,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                         if (isset($args[1])) {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
                                 $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
-                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+                                $pet = Server::getInstance()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                                     if ($pet->isInvEnabled()) {
@@ -128,7 +128,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                         if (isset($args[1])) {
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
                                 $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
-                                $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+                                $pet = Server::getInstance()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                                     if ($pet->isRidingEnabled()) {
@@ -152,11 +152,11 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");
             }
         } else {
-            $sender->sendMessage("§7---- ---- [ §aSimplePets§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimplePets\nVersion " . $this->getOwningPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
+            $sender->sendMessage("§7---- ---- [ §aSimplePets§7 ] ---- ----\n§bAuthor: @brokiem\n§3Source Code: github.com/brokiem/SimplePets\nVersion " . $this->getPlugin()->getDescription()->getVersion() . "\n§7---- ---- ---- - ---- ---- ----");
         }
     }
 
-    public function getOwningPlugin(): Plugin {
+    public function getPlugin(): Plugin {
         return SimplePets::getInstance();
     }
 }

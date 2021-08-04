@@ -12,12 +12,14 @@ namespace brokiem\simplepets;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\PlayerInputPacket;
+use pocketmine\player\Player;
 
 final class EventListener implements Listener {
 
@@ -71,6 +73,22 @@ final class EventListener implements Listener {
                 if ($entity instanceof BasePet || $entity instanceof CustomPet) {
                     if ($entity->getRider()->getXuid() === $player->getXuid()) {
                         $entity->unlink();
+                    }
+                }
+            }
+        }
+    }
+
+    public function onTeleport(EntityTeleportEvent $event): void {
+        $entity = $event->getEntity();
+
+        if ($entity instanceof Player) {
+            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
+                foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
+                    $pet = $entity->getServer()->getWorldManager()->findEntity($petId);
+
+                    if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                        $pet->teleport($entity->getLocation());
                     }
                 }
             }

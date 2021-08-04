@@ -13,6 +13,7 @@
 - Pets with inventory
 - Pets can be ridden
 - XUID data saving
+- Multi world support
 - Lightweight & Open Source ❤
 
 ## 💬 Commands

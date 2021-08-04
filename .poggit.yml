@@ -2,7 +2,7 @@
 build-by-default: true
 branches:
   - master
-- pm3
+  - pm3
 
 projects:
   SimplePets:

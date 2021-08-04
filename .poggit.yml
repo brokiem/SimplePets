@@ -8,11 +8,9 @@ projects:
     icon: "/assets/logo-min.png"
     libs:
       - src: poggit/libasynql/libasynql
-        version: ^3.4.0
-        branch: "4.0"
+        version: ^3.3.1
       - src: muqsit/InvMenu/InvMenu
-        version: ^4.3.2
-        branch: "4.0"
+        version: ^4.1.1
     lint:
       phpstan: false
 ...

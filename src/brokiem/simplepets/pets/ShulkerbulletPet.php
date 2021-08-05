@@ -6,14 +6,14 @@ namespace brokiem\simplepets\pets;
 
 use brokiem\simplepets\pets\base\BasePet;
 
-class WolfPet extends BasePet {
+class ShulkerbulletPet extends BasePet {
 
-    public const SPET_ENTITY_ID = "minecraft:wolf";
+    public const SPET_ENTITY_ID = "minecraft:shulker_bullet";
 
     public $height = 0.9;
     public $width = 0.9;
 
     public function getPetType(): string {
-        return "WolfPet";
+        return "ShulkerbulletPet";
     }
 }

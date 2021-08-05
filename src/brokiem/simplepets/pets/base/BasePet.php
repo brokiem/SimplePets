@@ -13,6 +13,7 @@ use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\MenuIds;
+use pocketmine\block\Flowable;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Living;
 use pocketmine\item\Item;
@@ -250,6 +251,10 @@ abstract class BasePet extends Living {
                 break;
         }
 
+        if ($this->shouldJump()) {
+            $this->jump();
+        }
+
         $this->move($finalMotionX, $this->motion->y, $finalMotionZ);
         $this->updateMovement();
     }
@@ -352,6 +357,10 @@ abstract class BasePet extends Living {
             return;
         }
 
+        if ($this->shouldJump()) {
+            $this->jump();
+        }
+
         $x = $target->getLocation()->x - $this->getLocation()->x;
         $y = $target->getLocation()->y - $this->getLocation()->y;
         $z = $target->getLocation()->z - $this->getLocation()->z;
@@ -371,5 +380,10 @@ abstract class BasePet extends Living {
         $this->lookAt($target->getPosition());
 
         $this->updateMovement();
+    }
+
+    public function shouldJump(): bool {
+        $pos = $this->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
+        return $this->getLevelNonNull()->getBlock($pos)->getId() !== 0 and !$this->getLevelNonNull()->getBlock($pos) instanceof Flowable;
     }
 }

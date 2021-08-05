@@ -24,7 +24,7 @@ use poggit\libasynql\libasynql;
 final class SimplePets extends PluginBase {
     use SingletonTrait;
 
-    private DataConnector $database;
+    private ?DataConnector $database = null;
     private PetManager $petManager;
     private Database $databaseManager;
 

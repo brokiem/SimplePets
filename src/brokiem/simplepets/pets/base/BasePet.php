@@ -62,8 +62,6 @@ abstract class BasePet extends Living {
         $this->setHealth(20);
     }
 
-    abstract public static function getNetworkTypeId(): string;
-
     abstract public function getPetType(): string;
 
     public function getPetOwner(): ?string {
@@ -152,7 +150,7 @@ abstract class BasePet extends Living {
 
     public function link(Player $rider): void {
         $rider->setGenericFlag(Entity::DATA_FLAG_RIDING, true);
-        $rider->getDataPropertyManager()->setVector3(Entity::DATA_RIDER_SEAT_POSITION, new Vector3(0, $this->getInitialSizeInfo()->getHeight() + 1, 0));
+        $rider->getDataPropertyManager()->setVector3(Entity::DATA_RIDER_SEAT_POSITION, new Vector3(0, $this->height + 1, 0));
 
         $pk = new SetActorLinkPacket();
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);

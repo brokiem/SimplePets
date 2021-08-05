@@ -36,19 +36,8 @@ final class PetManager {
 
     public function __construct() {
         foreach ($this->default_pets as $type => $class) {
-            self::registerEntity($class, [$type]);
+            Entity::registerEntity($class, true, [$type]);
             $this->registerPet($type, $class);
-        }
-    }
-
-    public static function registerEntity(string $entityClass, array $saveNames = []): void {
-        if (!class_exists($entityClass)) {
-            throw new \RuntimeException("Class $entityClass not found.");
-        }
-
-        $refClass = new \ReflectionClass($entityClass);
-        if (is_a($entityClass, BasePet::class, true) || is_a($entityClass, CustomPet::class, true) and !$refClass->isAbstract()) {
-            Entity::registerEntity($entityClass, true, $saveNames);
         }
     }
 

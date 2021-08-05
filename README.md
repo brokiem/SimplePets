@@ -23,6 +23,7 @@
 | Command | Description | Permission | Default |
 | --- | --- | --- | --- |
 | ```/spet``` | ```SimplePets command list``` | ```none``` | ```true``` |
+| ```/spet petlist``` | ```Show all pet list``` | ```simplepets.petlist``` | ```op``` |
 | ```/spet spawn``` | ```Spawning a pet``` | ```simplepets.spawn``` | ```op``` |
 | ```/spet remove``` | ```Removing a pet``` | ```simplepets.remove``` | ```op``` |
 | ```/spet inv``` | ```View pet inventory``` | ```simplepets.inv``` | ```true``` |

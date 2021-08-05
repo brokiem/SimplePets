@@ -145,8 +145,22 @@ class Command extends \pocketmine\command\Command implements PluginIdentifiableC
                         }
                     }
                     break;
+                case "petlist":
+                    if (!$sender->hasPermission("simplepets.petlist")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
+                    $message = "§bSimplePets pet list:\n";
+
+                    foreach (SimplePets::getInstance()->getPetManager()->getRegisteredPets() as $type => $class) {
+                        $message .= "§b- §a" . $type . "\n";
+                    }
+
+                    $sender->sendMessage($message);
+                    break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§2» /spet ride <petName>\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet petlist\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§2» /spet ride <petName>\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");

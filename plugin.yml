@@ -19,3 +19,5 @@ permissions:
     default: true
   simplepets.ride:
     default: true
+  simplepets.petlist:
+    default: op

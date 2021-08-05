@@ -10,6 +10,7 @@
 
 - MySQL and SQLite database
 - Anti sql injection
+- All mobs in Minecraft
 - Pets with inventory
 - Pets can be ridden
 - XUID data saving

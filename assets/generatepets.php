@@ -6,10 +6,8 @@ namespace brokiem\simplepets\pets;
 
 class generatepets {
 
-    public const AGENT = "minecraft:agent";
     public const ARMOR_STAND = "minecraft:armor_stand";
     public const ARROW = "minecraft:arrow";
-    public const BALLOON = "minecraft:balloon";
     public const BAT = "minecraft:bat";
     public const BEE = "minecraft:bee";
     public const BLAZE = "minecraft:blaze";
@@ -45,7 +43,6 @@ class generatepets {
     public const HOPPER_MINECART = "minecraft:hopper_minecart";
     public const HORSE = "minecraft:horse";
     public const HUSK = "minecraft:husk";
-    public const ICE_BOMB = "minecraft:ice_bomb";
     public const IRON_GOLEM = "minecraft:iron_golem";
     public const LINGERING_POTION = "minecraft:lingering_potion";
     public const LLAMA = "minecraft:llama";

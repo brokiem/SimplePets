@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\manager;
 
-use brokiem\simplepets\pets\AgentPet;
 use brokiem\simplepets\pets\ArmorstandPet;
 use brokiem\simplepets\pets\ArrowPet;
-use brokiem\simplepets\pets\BalloonPet;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\pets\BatPet;
@@ -45,13 +43,11 @@ use brokiem\simplepets\pets\EyeofendersignalPet;
 use brokiem\simplepets\pets\FireballPet;
 use brokiem\simplepets\pets\FoxPet;
 use brokiem\simplepets\pets\GhastPet;
-use brokiem\simplepets\pets\GoatPet;
 use brokiem\simplepets\pets\GuardianPet;
 use brokiem\simplepets\pets\HoglinPet;
 use brokiem\simplepets\pets\HopperminecartPet;
 use brokiem\simplepets\pets\HorsePet;
 use brokiem\simplepets\pets\HuskPet;
-use brokiem\simplepets\pets\IcebombPet;
 use brokiem\simplepets\pets\IrongolemPet;
 use brokiem\simplepets\pets\LingeringpotionPet;
 use brokiem\simplepets\pets\LlamaPet;
@@ -115,10 +111,8 @@ use pocketmine\Player;
 final class PetManager {
 
     private array $default_pets = [
-        "AgentPet" => AgentPet::class,
         "ArmorstandPet" => ArmorstandPet::class,
         "ArrowPet" => ArrowPet::class,
-        "BalloonPet" => BalloonPet::class,
         "BatPet" => BatPet::class,
         "BeePet" => BeePet::class,
         "BlazePet" => BlazePet::class,
@@ -154,7 +148,6 @@ final class PetManager {
         "HopperminecartPet" => HopperminecartPet::class,
         "HorsePet" => HorsePet::class,
         "HuskPet" => HuskPet::class,
-        "IcebombPet" => IcebombPet::class,
         "IrongolemPet" => IrongolemPet::class,
         "LingeringpotionPet" => LingeringpotionPet::class,
         "LlamaPet" => LlamaPet::class,

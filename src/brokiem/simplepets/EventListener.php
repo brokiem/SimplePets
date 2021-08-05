@@ -78,14 +78,16 @@ final class EventListener implements Listener {
     public function onTeleport(EntityTeleportEvent $event): void {
         $entity = $event->getEntity();
 
-        if ($entity instanceof Player) {
-            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
-                foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
-                    $pet = $entity->getServer()->findEntity($petId);
+        if (!$entity instanceof Player) {
+            return;
+        }
 
-                    if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                        $pet->teleport($entity->getLocation());
-                    }
+        if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
+            foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
+                $pet = $entity->getServer()->findEntity($petId);
+
+                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                    $pet->teleport($entity->getLocation());
                 }
             }
         }

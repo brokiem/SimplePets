@@ -15,9 +15,6 @@ use brokiem\simplepets\pets\GoatPet;
 use brokiem\simplepets\pets\WolfPet;
 use brokiem\simplepets\SimplePets;
 use pocketmine\entity\Entity;
-use pocketmine\entity\EntityDataHelper;
-use pocketmine\entity\EntityFactory;
-use pocketmine\entity\Human;
 use pocketmine\level\Location;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
@@ -51,15 +48,7 @@ final class PetManager {
 
         $refClass = new \ReflectionClass($entityClass);
         if (is_a($entityClass, BasePet::class, true) || is_a($entityClass, CustomPet::class, true) and !$refClass->isAbstract()) {
-            if (is_a($entityClass, CustomPet::class, true)) {
-                EntityFactory::getInstance()->register($entityClass, function(World $world, CompoundTag $nbt) use ($entityClass): Entity {
-                    return new $entityClass(EntityDataHelper::parseLocation($nbt, $world), Human::parseSkinNBT($nbt), $nbt);
-                }, array_merge([$entityClass], $saveNames));
-            } else {
-                EntityFactory::getInstance()->register($entityClass, function(World $world, CompoundTag $nbt) use ($entityClass): Entity {
-                    return new $entityClass(EntityDataHelper::parseLocation($nbt, $world), $nbt);
-                }, array_merge([$entityClass], $saveNames));
-            }
+            Entity::registerEntity($entityClass, true, $saveNames);
         }
     }
 
@@ -76,14 +65,14 @@ final class PetManager {
 
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $nbt = Entity::createBaseNBT($owner->getPosition());
-        $nbt->setString("petOwner", $owner->getXuid())
-            ->setString("petName", $petName)
-            ->setFloat("petSize", $petSize)
-            ->setInt("petBaby", (int)$petBaby)
-            ->setInt("petVisibility", $petVis)
-            ->setInt("invEnabled", (int)$enableInv)
-            ->setInt("ridingEnabled", (int)$enableRiding)
-            ->setString("extraData", $extraData ?? "null");
+        $nbt->setString("petOwner", $owner->getXuid());
+        $nbt->setString("petName", $petName);
+        $nbt->setFloat("petSize", $petSize);
+        $nbt->setInt("petBaby", (int)$petBaby);
+        $nbt->setInt("petVisibility", $petVis);
+        $nbt->setInt("invEnabled", (int)$enableInv);
+        $nbt->setInt("ridingEnabled", (int)$enableRiding);
+        $nbt->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
@@ -99,14 +88,14 @@ final class PetManager {
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $nbt = Entity::createBaseNBT($owner->getPosition());
-        $nbt->setString("petOwner", $owner->getXuid())
-            ->setString("petName", $petName)
-            ->setFloat("petSize", $petSize)
-            ->setInt("petBaby", (int)$petBaby)
-            ->setInt("petVisibility", $petVis)
-            ->setInt("invEnabled", (int)$enableInv)
-            ->setInt("ridingEnabled", (int)$enableRiding)
-            ->setString("extraData", $extraData ?? "null");
+        $nbt->setString("petOwner", $owner->getXuid());
+        $nbt->setString("petName", $petName);
+        $nbt->setFloat("petSize", $petSize);
+        $nbt->setInt("petBaby", (int)$petBaby);
+        $nbt->setInt("petVisibility", $petVis);
+        $nbt->setInt("invEnabled", (int)$enableInv);
+        $nbt->setInt("ridingEnabled", (int)$enableRiding);
+        $nbt->setString("extraData", $extraData ?? "null");
         $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
 
         if ($pet !== null) {
@@ -153,12 +142,8 @@ final class PetManager {
             /** @var BasePet|CustomPet $class */
             $class = $this->registered_pets[$type];
 
-            if (is_a($class, BasePet::class, true)) {
+            if (is_a($class, BasePet::class, true) || is_a($class, CustomPet::class, true)) {
                 return new $class($location, $nbt);
-            }
-
-            if (is_a($class, CustomPet::class, true)) {
-                return new $class($location, Human::parseSkinNBT($nbt), $nbt);
             }
         }
 

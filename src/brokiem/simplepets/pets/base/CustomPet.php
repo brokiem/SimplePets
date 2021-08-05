@@ -13,13 +13,15 @@ use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\MenuIds;
+use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
 use pocketmine\item\Item;
 use pocketmine\level\Location;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\NBT;
+use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\NamedTag;
 use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
 use pocketmine\Player;
@@ -92,7 +94,7 @@ abstract class CustomPet extends Human {
     public function setPetBaby(bool $val): void {
         $this->petBaby = $val;
 
-        $this->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::BABY, $val);
+        $this->setGenericFlag(Entity::DATA_FLAG_BABY, $val);
     }
 
     public function isBabyPet(): bool {
@@ -152,8 +154,8 @@ abstract class CustomPet extends Human {
     }
 
     public function link(Player $rider): void {
-        $rider->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, true);
-        $rider->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, $this->getInitialSizeInfo()->getHeight() + 1, 0));
+        $rider->setGenericFlag(Entity::DATA_FLAG_RIDING, true);
+        $rider->getDataPropertyManager()->setVector3(Entity::DATA_RIDER_SEAT_POSITION, new Vector3(0, $this->height + 1, 0));
 
         $pk = new SetActorLinkPacket();
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);
@@ -166,8 +168,8 @@ abstract class CustomPet extends Human {
     public function unlink(): void {
         if ($this->rider !== null) {
             if ($this->getRider() !== null) {
-                $this->getRider()->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, false);
-                $this->getRider()->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 0, 0));
+                $this->getRider()->setGenericFlag(Entity::DATA_FLAG_RIDING, false);
+                $this->getRider()->getDataPropertyManager()->setVector3(Entity::DATA_RIDER_SEAT_POSITION, new Vector3(0, 0, 0));
 
                 $pk = new SetActorLinkPacket();
                 $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
@@ -191,17 +193,18 @@ abstract class CustomPet extends Human {
     }
 
     public function saveInventory(ListTag $petInventoryTag): void {
-        $nbt = CompoundTag::create()->setTag("PetInventory", $petInventoryTag);
+        $nbt = new CompoundTag("PetInventory");
+        $nbt->setTag($petInventoryTag);
+
         $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $this->getPetOwner() . "-" . $this->getName() . ".dat";
-        file_put_contents($file, zlib_encode((new LittleEndianNbtSerializer())->write(new TreeRoot($nbt)), ZLIB_ENCODING_GZIP));
+        file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($nbt));
     }
 
-    public function getSavedInventory(): ?CompoundTag {
+    public function getSavedInventory(): null|NamedTag|array {
         $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $this->getPetOwner() . "-" . $this->getName() . ".dat";
 
         if (is_file($file)) {
-            $decompressed = @zlib_decode(file_get_contents($file));
-            return (new LittleEndianNbtSerializer())->read($decompressed)->mustGetCompoundTag();
+            return (new LittleEndianNBTStream())->readCompressed(file_get_contents($file));
         }
 
         return null;
@@ -252,6 +255,7 @@ abstract class CustomPet extends Human {
 
         $petInventoryTag = $this->getSavedInventory();
         if ($petInventoryTag !== null) {
+            /** @var CompoundTag $petInventoryTag */
             $inv = $petInventoryTag->getListTag("PetInventory");
             if ($inv !== null) {
                 /** @var CompoundTag $item */
@@ -275,7 +279,7 @@ abstract class CustomPet extends Human {
                 }
             }
 
-            $this->saveInventory(new ListTag($items, NBT::TAG_Compound));
+            $this->saveInventory(new ListTag("PetInventory", $items));
         }
     }
 

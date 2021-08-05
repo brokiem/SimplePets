@@ -13,6 +13,8 @@ use brokiem\simplepets\pets\base\BasePet;
 
 class GoatPet extends BasePet {
 
+    public const SPET_ENTITY_ID = "minecraft:goat";
+
     public $height = 0.7;
     public $width = 0.7;
 

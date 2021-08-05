@@ -22,11 +22,14 @@ use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\NamedTag;
+use pocketmine\network\mcpe\protocol\AddActorPacket;
 use pocketmine\network\mcpe\protocol\SetActorLinkPacket;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
 use pocketmine\Player;
 
 abstract class BasePet extends Living {
+
+    public const SPET_ENTITY_ID = -1;
 
     private ?string $petOwner = null;
     private ?string $petName = null;
@@ -273,6 +276,21 @@ abstract class BasePet extends Living {
                 }
             }
         }
+    }
+
+    protected function sendSpawnPacket(Player $player): void {
+        $pk = new AddActorPacket();
+        $pk->entityRuntimeId = $this->getId();
+        $pk->type = is_string(static::SPET_ENTITY_ID) ? static::SPET_ENTITY_ID : AddActorPacket::LEGACY_ID_MAP_BC[static::SPET_ENTITY_ID];
+        $pk->position = $this->asVector3();
+        $pk->motion = $this->getMotion();
+        $pk->yaw = $this->yaw;
+        $pk->headYaw = $this->yaw;
+        $pk->pitch = $this->pitch;
+        $pk->attributes = $this->attributeMap->getAll();
+        $pk->metadata = $this->propertyManager->getAll();
+
+        $player->dataPacket($pk);
     }
 
     public function saveNBT(): void {

@@ -13,6 +13,8 @@ use brokiem\simplepets\pets\base\BasePet;
 
 class WolfPet extends BasePet {
 
+    public const SPET_ENTITY_ID = "minecraft:wolf";
+
     public $height = 0.85;
     public $width = 0.8;
 

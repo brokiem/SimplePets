@@ -31,6 +31,18 @@ final class SimplePets extends PluginBase {
     private array $players = [];
 
     public function onEnable(): void {
+        $this->getLogger()->debug("Checking virions");
+        $missing = $this->checkVirion();
+        if (!empty($missing)) {
+            foreach ($missing as $class => $name) {
+                $this->getLogger()->alert("Virion $class not found. ($name)");
+            }
+
+            $this->getLogger()->alert("Please install the virion or download the plugin from poggit! Disabling plugin...");
+            $this->getServer()->getPluginManager()->disablePlugin($this);
+            return;
+        }
+
         self::setInstance($this);
 
         $this->getLogger()->debug("Registering listener");
@@ -46,6 +58,22 @@ final class SimplePets extends PluginBase {
         $this->initPets();
 
         $this->getLogger()->debug("Plugin successfully enabled");
+    }
+
+    private function checkVirion(): array {
+        $virions = [
+            "poggit\libasynql\libasynql" => "libasynql",
+            "muqsit\invmenu\InvMenu" => "InvMenu"
+        ];
+        $missing = [];
+
+        foreach ($virions as $class => $name) {
+            if (!class_exists($class)) {
+                $missing[$class] = $name;
+            }
+        }
+
+        return $missing;
     }
 
     private function initDatabase(): void {

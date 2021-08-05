@@ -61,7 +61,9 @@ final class EventListener implements Listener {
 
         if ($packet instanceof PlayerInputPacket) {
             $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
-            $pet?->walk($packet->motionX, $packet->motionY, $player);
+            if ($pet !== null) {
+                $pet->walk($packet->motionX, $packet->motionY, $player);
+            }
         } elseif ($packet instanceof InteractPacket) {
             if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {
                 $entity = $player->getServer()->findEntity($packet->target);

@@ -28,7 +28,8 @@ final class Database {
     public const SIMPLEPETS_SET_VERSION = "simplepets.set-version";
     public const SIMPLEPETS_GETALLPETS = "simplepets.getallpets";
 
-    public function registerPet(BasePet|CustomPet $pet): void {
+    /** @var BasePet|CustomPet $pet */
+    public function registerPet($pet): void {
         $db = SimplePets::getInstance()->getDatabase();
         $db->executeInsert(self::SIMPLEPETS_REGISTERPET, [
             "petType" => $pet->getPetType(),
@@ -43,7 +44,8 @@ final class Database {
         ]);
     }
 
-    public function savePet(BasePet|CustomPet $pet): void {
+    /** @var BasePet|CustomPet $pet */
+    public function savePet($pet): void {
         $db = SimplePets::getInstance()->getDatabase();
         $db->executeSelect(self::SIMPLEPETS_GETPET, [
             "petName" => $pet->getPetName(),

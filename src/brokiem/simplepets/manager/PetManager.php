@@ -97,7 +97,11 @@ final class PetManager {
         }
     }
 
-    public function addRiddenPet(Player $owner, BasePet|CustomPet $pet): void {
+    /**
+     * @param Player $owner
+     * @var BasePet|CustomPet $pet
+     */
+    public function addRiddenPet(Player $owner, $pet): void {
         $this->ridden_pet[$owner->getName()] = $pet;
     }
 
@@ -109,11 +113,16 @@ final class PetManager {
         return $this->active_pets;
     }
 
-    public function getRiddenPet(Player $owner): null|BasePet|CustomPet {
+    /** @return BasePet|CustomPet */
+    public function getRiddenPet(Player $owner) {
         return $this->ridden_pet[$owner->getName()];
     }
 
-    public function removeRiddenPet(Player $owner, BasePet|CustomPet $pet): void {
+    /**
+     * @param Player $owner
+     * @var BasePet|CustomPet $pet
+     */
+    public function removeRiddenPet(Player $owner, $pet): void {
         $this->ridden_pet[$owner->getName()] = $pet;
     }
 
@@ -126,7 +135,8 @@ final class PetManager {
         return false;
     }
 
-    public function createEntity(string $type, Location $location, CompoundTag $nbt): null|BasePet|CustomPet {
+    /** @return  BasePet|CustomPet $pet */
+    public function createEntity(string $type, Location $location, CompoundTag $nbt) {
         if (isset($this->registered_pets[$type])) {
             /** @var BasePet|CustomPet $class */
             $class = $this->registered_pets[$type];

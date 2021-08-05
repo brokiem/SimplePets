@@ -31,13 +31,13 @@ abstract class CustomPet extends Human {
 
     private ?string $petOwner = null;
     private ?string $petName = null;
-    private float|int $petSize = 1;
+    private float $petSize = 1;
     private bool $petBaby = false;
     private int $petVisibility = PetManager::VISIBLE_TO_EVERYONE;
     private bool $invEnabled = true;
     private bool $ridingEnabled = true;
     private ?string $extraData = null;
-    private float|int $checkVal = 0;
+    private float $checkVal = 0;
 
     private InvMenu $petInventoryMenu;
 
@@ -201,7 +201,8 @@ abstract class CustomPet extends Human {
         file_put_contents($file, (new LittleEndianNBTStream())->writeCompressed($nbt));
     }
 
-    public function getSavedInventory(): null|NamedTag|array {
+    /** @return null|NamedTag|NamedTag[] */
+    public function getSavedInventory() {
         $file = SimplePets::getInstance()->getDataFolder() . "pets_inventory/" . $this->getPetOwner() . "-" . $this->getName() . ".dat";
 
         if (is_file($file)) {

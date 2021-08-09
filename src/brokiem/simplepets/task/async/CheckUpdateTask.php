@@ -67,7 +67,7 @@ class CheckUpdateTask extends AsyncTask {
             $updateDate = date("j F Y", (int)$updateDateUnix);
 
             if ($this->version !== $latestVersion) {
-                $plugin->getLogger()->notice("SimpleNPC v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
+                $plugin->getLogger()->notice("SimplePets v$latestVersion has been released on $updateDate. Download the new update at $updateUrl");
                 $plugin->cachedUpdate = [$latestVersion, $updateDate, $updateUrl];
             }
         }

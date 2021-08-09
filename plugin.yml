@@ -21,3 +21,5 @@ permissions:
     default: true
   simplepets.petlist:
     default: op
+  simplepets.notify:
+    default: op

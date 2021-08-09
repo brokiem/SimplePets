@@ -5,6 +5,7 @@
 [![Star](https://img.shields.io/github/stars/brokiem/SimplePets)](https://github.com/brokiem/SimplePets/stargazers)
 [![Discord](https://img.shields.io/discord/830063409000087612?color=7389D8&label=discord)](https://discord.com/invite/jy6abSrjhQ)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/brokiem)
+[![](https://poggit.pmmp.io/shield.dl.total/SimplePets)](https://poggit.pmmp.io/p/SimplePets)
 
 ## ✨ Features
 

@@ -26,6 +26,14 @@ final class EventListener implements Listener {
     public function onJoin(PlayerJoinEvent $event): void {
         $player = $event->getPlayer();
 
+        if ($player->hasPermission("simplenpc.notify") and !empty(SimplePets::getInstance()->cachedUpdate)) {
+            [$latestVersion, $updateDate, $updateUrl] = SimplePets::getInstance()->cachedUpdate;
+
+            if (SimplePets::getInstance()->getDescription()->getVersion() !== $latestVersion) {
+                $player->sendMessage(" \n§aSimpleNPC §bv$latestVersion §ahas been released on §b$updateDate. §aDownload the new update at §b$updateUrl\n ");
+            }
+        }
+
         SimplePets::getInstance()->addPlayer($player);
         SimplePets::getInstance()->getDatabaseManager()->respawnPet($player);
     }

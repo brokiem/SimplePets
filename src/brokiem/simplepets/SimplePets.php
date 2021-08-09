@@ -29,6 +29,7 @@ final class SimplePets extends PluginBase {
     private Database $databaseManager;
 
     private array $players = [];
+    public array $cachedUpdate = [];
 
     public function onEnable(): void {
         $this->getLogger()->debug("Checking virions");

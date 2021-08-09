@@ -52,7 +52,7 @@ class Command extends \pocketmine\command\Command implements PluginIdentifiableC
 
                                     $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
                                 } else {
-                                    $sender->sendMessage("§cPet with type §4" . $args[1] . " §cis not registered");
+                                    $sender->sendMessage("§cPet with type §4" . $args[1] . " §cis not registered. §aTry §b/spet petlist §ato view registered pets");
                                 }
                             }
                         } else {

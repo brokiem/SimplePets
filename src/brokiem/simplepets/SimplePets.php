@@ -14,6 +14,7 @@ use brokiem\simplepets\database\Database;
 use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
+use brokiem\simplepets\task\async\CheckUpdateTask;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
@@ -58,6 +59,9 @@ final class SimplePets extends PluginBase {
         $this->getLogger()->debug("Loading pets");
         $this->initPets();
 
+        $this->getLogger()->debug("Running tasks");
+        $this->runTasks();
+
         $this->getLogger()->debug("Plugin successfully enabled");
     }
 
@@ -75,6 +79,10 @@ final class SimplePets extends PluginBase {
         }
 
         return $missing;
+    }
+
+    public function runTasks(): void {
+        $this->getServer()->getAsyncPool()->submitTask(new CheckUpdateTask($this));
     }
 
     private function initDatabase(): void {

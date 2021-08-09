@@ -34,71 +34,103 @@ class Command extends \pocketmine\command\Command implements PluginIdentifiableC
                         return;
                     }
 
-                    if ($sender instanceof Player) {
-                        if (isset($args[2])) {
-                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[2]])) {
-                                $sender->sendMessage("§cYou already have a pet with the name " . $args[2]);
-                            } else {
-                                if (isset(SimplePets::getInstance()->getPetManager()->getRegisteredPets()[$args[1]])) {
-                                    if (isset($args[3]) && is_numeric($args[3]) and (float)$args[3] > 0 and (float)$args[3] < 10) {
-                                        if (isset($args[4]) && is_bool($args[4])) {
-                                            SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3], (bool)$args[4]);
-                                        } else {
-                                            SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2], (float)$args[3]);
-                                        }
-                                    } else {
-                                        SimplePets::getInstance()->getPetManager()->spawnPet($sender, $args[1], $args[2]);
-                                    }
+                    if (isset($args[1], $args[2])) {
+                        $player = Server::getInstance()->getPlayer($args[1]);
 
-                                    $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[1]) . " §awith the name §b" . $args[2] . " §ahas been successfully spawned");
-                                } else {
-                                    $sender->sendMessage("§cPet with type §4" . $args[1] . " §cis not registered. §aTry §b/spet petlist §ato view registered pets");
-                                }
-                            }
+                        if ($player === null) {
+                            $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
+                            return;
+                        }
+
+                        if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
+                            $sender->sendMessage("§c{$player->getName()} already have a pet with the name " . $args[2]);
                         } else {
-                            $sender->sendMessage("§cUsage: /spet spawn <petType> <petName> <petSize> <petBaby>");
+                            if (isset(SimplePets::getInstance()->getPetManager()->getRegisteredPets()[$args[2]])) {
+                                if (isset($args[4]) && is_numeric($args[4]) and (float)$args[4] > 0 and (float)$args[4] < 10) {
+                                    if (isset($args[5]) && is_bool($args[5])) {
+                                        SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3], (float)$args[4], (bool)$args[5]);
+                                    } else {
+                                        SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3], (float)$args[4]);
+                                    }
+                                } else {
+                                    SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3]);
+                                }
+
+                                $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[2]) . " §awith the name §b" . $args[3] . " §ahas been successfully spawned to §b" . $player->getName());
+                            } else {
+                                $sender->sendMessage("§cPet with type §4" . $args[2] . " §cis not registered. §aTry §b/spet petlist §ato view registered pets");
+                            }
                         }
                     } else {
-                        $sender->sendMessage("§cOnly player can run this command");
+                        $sender->sendMessage("§cUsage: /spet spawn <player> <petType> <petName> <petSize> <petBaby>");
                     }
                     break;
                 case "remove":
                 case "delete":
-                    if (!$sender->hasPermission("simplepets.remove")) {
-                        $sender->sendMessage("§cYou don't have permission to run this command");
+                if (!$sender->hasPermission("simplepets.remove")) {
+                    $sender->sendMessage("§cYou don't have permission to run this command");
+                    return;
+                }
+
+                if (isset($args[1], $args[2])) {
+                    $player = Server::getInstance()->getPlayer($args[1]);
+
+                    if ($player === null) {
+                        $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
                         return;
                     }
 
-                    if ($sender instanceof Player) {
-                        if (isset($args[1])) {
-                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
-                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
-                                $pet = Server::getInstance()->findEntity($id);
+                    if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
+                        $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]];
+                        $pet = Server::getInstance()->findEntity($id);
 
-                                if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                                    $pet->despawn();
-                                }
-
-                                SimplePets::getInstance()->getPetManager()->removeActivePet($sender, $args[1]);
-                                SimplePets::getInstance()->getDatabaseManager()->removePet($sender, $args[1]);
-                                $sender->sendMessage("§aPet with the name §b" . $args[1] . " §ahas been successfully removed");
-                            } else {
-                                $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);
-                            }
-                        } else {
-                            $sender->sendMessage("§cUsage: /spet remove <petName>");
+                        if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                            $pet->despawn();
                         }
+
+                        SimplePets::getInstance()->getPetManager()->removeActivePet($player, $args[2]);
+                        SimplePets::getInstance()->getDatabaseManager()->removePet($player, $args[2]);
+                        $sender->sendMessage("§aPet with the name §b" . $args[2] . " §afrom §b{$player->getName()} §ahas been successfully removed");
+                    } else {
+                        $sender->sendMessage("§a{$player->getName()} don't have a pet with the name §b" . $args[2]);
                     }
+                } else {
+                    $sender->sendMessage("§cUsage: /spet remove <player> <petName>");
+                }
                 break;
                 case "inventory":
                 case "inv":
-                    if (!$sender->hasPermission("simplepets.inv")) {
-                        $sender->sendMessage("§cYou don't have permission to run this command");
-                        return;
-                    }
-
                     if ($sender instanceof Player) {
-                        if (isset($args[1])) {
+                        if (isset($args[2])) {
+                            if (!$sender->hasPermission("simplepets.inv.other")) {
+                                $sender->sendMessage("§cYou don't have permission to run this command");
+                                return;
+                            }
+
+                            $player = Server::getInstance()->getPlayer($args[1]);
+
+                            if ($player === null) {
+                                $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
+                            } else {
+                                if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
+                                    $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]];
+                                    $pet = Server::getInstance()->findEntity($id);
+
+                                    if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                        $pet->getInventoryMenu()->send($player, $pet->getName());
+                                    }
+                                } else {
+                                    $sender->sendMessage("§a{$player->getName()} don't have a pet with the name §b" . $args[2]);
+                                }
+
+                                return;
+                            }
+                        } elseif (isset($args[1])) {
+                            if (!$sender->hasPermission("simplepets.inv")) {
+                                $sender->sendMessage("§cYou don't have permission to run this command");
+                                return;
+                            }
+
                             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
                                 $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
                                 $pet = Server::getInstance()->findEntity($id);
@@ -114,7 +146,7 @@ class Command extends \pocketmine\command\Command implements PluginIdentifiableC
                                 $sender->sendMessage("§aYou don't have a pet with the name §b" . $args[1]);
                             }
                         } else {
-                            $sender->sendMessage("§cUsage: /spet inv <petName>");
+                            $sender->sendMessage("§cUsage: /spet inv <player> <petName>");
                         }
                     }
                 break;
@@ -160,7 +192,7 @@ class Command extends \pocketmine\command\Command implements PluginIdentifiableC
                     $sender->sendMessage($message);
                     break;
                 case "help":
-                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet petlist\n§2» /spet spawn <petType> <petName> <petSize>\n§2» /spet remove <petName>\n§2» /spet inv <petName>\n§2» /spet ride <petName>\n§7---- ---- ---- - ---- ---- ----");
+                    $sender->sendMessage("\n§7---- ---- ---- - ---- ---- ----\n§eCommand List:\n§2» /spet petlist\n§2» /spet spawn <player> <petType> <petName> <petSize>\n§2» /spet remove <player> <petName>\n§2» /spet inv <player> <petName>\n§2» /spet ride <petName>\n§7---- ---- ---- - ---- ---- ----");
                     break;
                 default:
                     $sender->sendMessage(TextFormat::RED . "Subcommand '$args[0]' not found! Try '/spet help' for help.");

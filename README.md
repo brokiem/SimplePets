@@ -29,6 +29,7 @@
 | ```/spet spawn``` | ```Spawning a pet``` | ```simplepets.spawn``` | ```op``` |
 | ```/spet remove``` | ```Removing a pet``` | ```simplepets.remove``` | ```op``` |
 | ```/spet inv``` | ```View pet inventory``` | ```simplepets.inv``` | ```true``` |
+| ```/spet <player> inv``` | ```View other player pet inventory``` | ```simplepets.inv.other``` | ```op``` |
 | ```/spet ride``` | ```Ride a pet``` | ```simplepets.ride``` | ```true``` |
 
 ## 📝 Todo List

@@ -86,6 +86,7 @@ final class SimplePets extends PluginBase {
     }
 
     private function initDatabase(): void {
+        $this->saveDefaultConfig();
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
             "sqlite" => "sqlite.sql",
             "mysql" => "mysql.sql"

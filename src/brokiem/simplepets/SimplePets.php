@@ -67,8 +67,8 @@ final class SimplePets extends PluginBase {
 
     private function checkVirion(): array {
         $virions = [
-            "poggit\libasynql\libasynql" => "libasynql",
-            "muqsit\invmenu\InvMenu" => "InvMenu"
+            libasynql::class => "libasynql",
+            InvMenu::class => "InvMenu"
         ];
         $missing = [];
 

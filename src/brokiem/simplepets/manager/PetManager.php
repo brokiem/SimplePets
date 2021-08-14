@@ -291,9 +291,9 @@ final class PetManager {
         return $this->active_pets;
     }
 
-    /** @return BasePet|CustomPet */
+    /** @return null|BasePet|CustomPet */
     public function getRiddenPet(Player $owner) {
-        return $this->ridden_pet[$owner->getName()];
+        return $this->ridden_pet[$owner->getName()] ?? null;
     }
 
     /**

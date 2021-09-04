@@ -14,6 +14,7 @@ use brokiem\simplepets\database\Database;
 use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
+use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\InvMenuHandler;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
@@ -62,8 +63,8 @@ final class SimplePets extends PluginBase {
 
     private function checkVirion(): array {
         $virions = [
-            "poggit\libasynql\libasynql" => "libasynql",
-            "muqsit\invmenu\InvMenu" => "InvMenu"
+            libasynql::class => "libasynql",
+            InvMenu::class => "InvMenu"
         ];
         $missing = [];
 

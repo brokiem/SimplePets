@@ -7,14 +7,14 @@ namespace brokiem\simplepets\pets;
 use brokiem\simplepets\pets\base\BasePet;
 use pocketmine\entity\EntitySizeInfo;
 
-class WolfPet extends BasePet {
+class EnderpearlPet extends BasePet {
 
-public static function getNetworkTypeId(): string {
-    return "minecraft:wolf";
-}
+    public static function getNetworkTypeId(): string {
+        return "minecraft:ender_pearl";
+    }
 
     public function getPetType(): string {
-        return "WolfPet";
+        return "EnderpearlPet";
     }
 
     protected function getInitialSizeInfo(): EntitySizeInfo {

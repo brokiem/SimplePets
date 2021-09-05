@@ -317,7 +317,7 @@ final class PetManager {
     }
 
     public function getRiddenPet(Player $owner): null|BasePet|CustomPet {
-        return $this->ridden_pet[$owner->getName()];
+        return $this->ridden_pet[$owner->getName()] ?? null;
     }
 
     public function removeRiddenPet(Player $owner, BasePet|CustomPet $pet): void {

@@ -13,10 +13,6 @@ use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\type\InvMenuTypeIds;
-use pocketmine\block\Block;
-use pocketmine\block\BlockLegacyIds;
-use pocketmine\block\Slab;
-use pocketmine\block\Stair;
 use pocketmine\entity\Living;
 use pocketmine\entity\Location;
 use pocketmine\item\Item;
@@ -363,19 +359,6 @@ abstract class BasePet extends Living {
         $this->move($this->motion->x, $this->motion->y, $this->motion->z);
         $this->lookAt($target->getPosition());
 
-        if ($this->getFrontBlock()->getId() !== BlockLegacyIds::AIR or
-            $this->getFrontBlock(-1) instanceof Stair or
-            $this->getFrontBlock(-0.5) instanceof Slab
-        ) {
-            $this->jump();
-        }
-
         $this->updateMovement();
-    }
-
-    public function getFrontBlock($y = 0): Block {
-        $dv = $this->getDirectionVector();
-        $pos = $this->getPosition()->add($dv->x * $this->getScale(), $y + 1, $dv->z * $this->getScale())->round();
-        return $this->getWorld()->getBlock($pos);
     }
 }

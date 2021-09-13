@@ -300,7 +300,7 @@ abstract class BasePet extends Living {
     }
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
-        if ($this->rider !== null) {
+        if ($this->rider !== null or $this->isClosed()) {
             return parent::entityBaseTick($tickDiff);
         }
 

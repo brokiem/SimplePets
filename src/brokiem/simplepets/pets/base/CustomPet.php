@@ -288,7 +288,7 @@ abstract class CustomPet extends Human {
     }
 
     protected function entityBaseTick(int $tickDiff = 1): bool {
-        if ($this->rider !== null) {
+        if ($this->rider !== null or $this->isClosed()) {
             return parent::entityBaseTick($tickDiff);
         }
 

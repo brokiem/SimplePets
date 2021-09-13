@@ -100,6 +100,11 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                 break;
                 case "inventory":
                 case "inv":
+                    if (!SimplePets::getInstance()->getConfig()->get("enable-inventory")) {
+                        $sender->sendMessage("§cPet inventory feature is disabled!");
+                        return;
+                    }
+
                     if ($sender instanceof Player) {
                         if (isset($args[2])) {
                             if (!$sender->hasPermission("simplepets.inv.other")) {
@@ -151,6 +156,11 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                     }
                     break;
                 case "ride":
+                    if (!SimplePets::getInstance()->getConfig()->get("enable-riding")) {
+                        $sender->sendMessage("§cPet riding feature is disabled!");
+                        return;
+                    }
+
                     if (!$sender->hasPermission("simplepets.ride")) {
                         $sender->sendMessage("§cYou don't have permission to run this command");
                         return;

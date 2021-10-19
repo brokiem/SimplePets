@@ -1,8 +1,8 @@
 name: SimplePets
 main: brokiem\simplepets\SimplePets
-version: 1.0.3-beta
+version: 1.0.4-beta
 api: 3.20.0
-mcpe-protocol: [ 440, 448, 465 ]
+mcpe-protocol: [ 440, 448, 465, 471 ]
 authors: [ "broki", "brokiem", "broski" ]
 
 website: https://github.com/brokiem/SimplePets

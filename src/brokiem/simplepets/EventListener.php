@@ -68,7 +68,7 @@ final class EventListener implements Listener {
             $pet?->walk($packet->motionX, $packet->motionY, $player);
         } elseif ($packet instanceof InteractPacket) {
             if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {
-                $entity = $player->getServer()->getWorldManager()->findEntity($packet->target);
+                $entity = $player->getServer()->getWorldManager()->findEntity($packet->targetActorRuntimeId);
 
                 if ($entity instanceof BasePet || $entity instanceof CustomPet) {
                     if ($entity->getRider()->getXuid() === $player->getXuid()) {

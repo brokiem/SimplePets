@@ -13,6 +13,9 @@ use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\SimplePets;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\type\InvMenuTypeIds;
+use pocketmine\block\Block;
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\block\Carpet;
 use pocketmine\block\Flowable;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
@@ -360,7 +363,23 @@ abstract class CustomPet extends Human {
     }
 
     public function shouldJump(): bool {
-        $pos = $this->getPosition()->add($this->getDirectionVector()->x * $this->getScale(), 0, $this->getDirectionVector()->z * $this->getScale())->round();
-        return $this->getWorld()->getBlock($pos)->getId() !== 0 and !$this->getWorld()->getBlock($pos) instanceof Flowable;
+        if ($this->getBlockInFront()->getId() !== BlockLegacyIds::AIR) {
+            return $this->getBlockInFront(1)->getId() === BlockLegacyIds::AIR;
+        }
+
+        if ($this->getBlockInFront(-0.1) instanceof Carpet) {
+            return true;
+        }
+
+        if ($this->getBlockInFront() instanceof Flowable) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public function getBlockInFront(float $y = 0): Block {
+        $pos = $this->getPosition()->add($this->getDirectionVector()->x * $this->getScale(), $y, $this->getDirectionVector()->z * $this->getScale())->round();
+        return $this->getWorld()->getBlock($pos);
     }
 }

@@ -380,8 +380,8 @@ abstract class BasePet extends Living {
             return $this->getBlockInFront(1)->getId() === BlockLegacyIds::AIR;
         }
 
-        if ($this->getBlockInFront(-0.1) instanceof Carpet) {
-            return !($this->getWorld()->getBlock($this->getPosition()->add(0, -0.1, 0)) instanceof Carpet);
+        if ($this->getBlockInFront(-0.9) instanceof Carpet) {
+            return !($this->getWorld()->getBlock($this->getPosition()->add(0, -0.9, 0)) instanceof Carpet);
         }
 
         if ($this->getBlockInFront() instanceof Flowable) {

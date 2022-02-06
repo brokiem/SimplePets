@@ -370,7 +370,9 @@ abstract class BasePet extends Living {
         $this->getLocation()->pitch = rad2deg(-atan2($y, sqrt($x * $x + $z * $z)));
 
         $this->move($this->motion->x, $this->motion->y, $this->motion->z);
-        $this->lookAt($target->getPosition());
+        if (!SimplePets::getInstance()->getPetManager()->getRiddenPet($target)) {
+            $this->lookAt($target->getPosition());
+        }
 
         $this->updateMovement();
     }

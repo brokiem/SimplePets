@@ -260,7 +260,10 @@ final class PetManager {
     }
 
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
-        $nbt = $this->createBaseNBT($owner->getPosition());
+        $location = clone $owner->getLocation();
+        $location->y = $owner->getLocation()->getY() + 1;
+
+        $nbt = $this->createBaseNBT($location);
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
             ->setFloat("petSize", $petSize)
@@ -269,7 +272,7 @@ final class PetManager {
             ->setInt("invEnabled", (int)$enableInv)
             ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
-        $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
+        $pet = $this->createEntity($petType, $location, $nbt);
 
         if ($pet !== null) {
             $pet->setPetName($petName);
@@ -283,7 +286,10 @@ final class PetManager {
     }
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
-        $nbt = $this->createBaseNBT($owner->getPosition());
+        $location = clone $owner->getLocation();
+        $location->y = $owner->getLocation()->getY() + 1;
+
+        $nbt = $this->createBaseNBT($location);
         $nbt->setString("petOwner", $owner->getXuid())
             ->setString("petName", $petName)
             ->setFloat("petSize", $petSize)
@@ -292,7 +298,7 @@ final class PetManager {
             ->setInt("invEnabled", (int)$enableInv)
             ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
-        $pet = $this->createEntity($petType, $owner->getLocation(), $nbt);
+        $pet = $this->createEntity($petType, $location, $nbt);
 
         if ($pet !== null) {
             $pet->setPetName($petName);

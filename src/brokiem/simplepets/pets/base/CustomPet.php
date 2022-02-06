@@ -17,6 +17,7 @@ use pocketmine\block\Block;
 use pocketmine\block\BlockLegacyIds;
 use pocketmine\block\Carpet;
 use pocketmine\block\Flowable;
+use pocketmine\block\Liquid;
 use pocketmine\entity\Human;
 use pocketmine\entity\Location;
 use pocketmine\entity\Skin;
@@ -368,11 +369,15 @@ abstract class CustomPet extends Human {
         }
 
         if ($this->getBlockInFront(-0.1) instanceof Carpet) {
-            return true;
+            return !($this->getWorld()->getBlock($this->getPosition()->add(0, -0.1, 0)) instanceof Carpet);
         }
 
         if ($this->getBlockInFront() instanceof Flowable) {
             return false;
+        }
+
+        if ($this->getBlockInFront() instanceof Liquid) {
+            return true;
         }
 
         return false;

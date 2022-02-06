@@ -12,6 +12,4 @@ projects:
       - src: muqsit/InvMenu/InvMenu
         version: ^4.3.8
         branch: "4.0"
-    lint:
-      phpstan: false
 ...

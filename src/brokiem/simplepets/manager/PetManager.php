@@ -274,13 +274,13 @@ final class PetManager {
             ->setString("extraData", $extraData ?? "null");
         if (isset($this->registered_pets[$petType]) && is_a($this->registered_pets[$petType], CustomPet::class, true)) {
 			$nbt->setTag(
-				'Skin',
+				"Skin",
 				CompoundTag::create()
-				->setString('Name', $owner->getSkin()->getSkinId())
-				->setByteArray('Data', $owner->getSkin()->getSkinData())
-				->setByteArray('CapeData', $owner->getSkin()->getCapeData())
-				->setString('GeometryName', $owner->getSkin()->getGeometryName())
-				->setByteArray('GeometryData', $owner->getSkin()->getGeometryData())
+				->setString("Name", $owner->getSkin()->getSkinId())
+				->setByteArray("Data", $owner->getSkin()->getSkinData())
+				->setByteArray("CapeData", $owner->getSkin()->getCapeData())
+				->setString("GeometryName", $owner->getSkin()->getGeometryName())
+				->setByteArray("GeometryData", $owner->getSkin()->getGeometryData())
 			);
 		}
         $pet = $this->createEntity($petType, $location, $nbt);
@@ -309,6 +309,17 @@ final class PetManager {
             ->setInt("invEnabled", (int)$enableInv)
             ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
+        if (isset($this->registered_pets[$petType]) && is_a($this->registered_pets[$petType], CustomPet::class, true)) {
+			$nbt->setTag(
+				"Skin",
+				CompoundTag::create()
+				->setString("Name", $owner->getSkin()->getSkinId())
+				->setByteArray("Data", $owner->getSkin()->getSkinData())
+				->setByteArray("CapeData", $owner->getSkin()->getCapeData())
+				->setString("GeometryName", $owner->getSkin()->getGeometryName())
+				->setByteArray("GeometryData", $owner->getSkin()->getGeometryData())
+			);
+		}
         $pet = $this->createEntity($petType, $location, $nbt);
 
         if ($pet !== null) {

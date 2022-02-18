@@ -272,6 +272,17 @@ final class PetManager {
             ->setInt("invEnabled", (int)$enableInv)
             ->setInt("ridingEnabled", (int)$enableRiding)
             ->setString("extraData", $extraData ?? "null");
+        if (isset($this->registered_pets[$petType]) && is_a($this->registered_pets[$petType], CustomPet::class, true)) {
+			$nbt->setTag(
+				'Skin',
+				CompoundTag::create()
+				->setString('Name', $player->getSkin()->getSkinId())
+				->setByteArray('Data', $player->getSkin()->getSkinData())
+				->setByteArray('CapeData', $player->getSkin()->getCapeData())
+				->setString('GeometryName', $player->getSkin()->getGeometryName())
+				->setByteArray('GeometryData', $player->getSkin()->getGeometryData())
+			);
+		}
         $pet = $this->createEntity($petType, $location, $nbt);
 
         if ($pet !== null) {

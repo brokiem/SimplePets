@@ -276,11 +276,11 @@ final class PetManager {
 			$nbt->setTag(
 				'Skin',
 				CompoundTag::create()
-				->setString('Name', $player->getSkin()->getSkinId())
-				->setByteArray('Data', $player->getSkin()->getSkinData())
-				->setByteArray('CapeData', $player->getSkin()->getCapeData())
-				->setString('GeometryName', $player->getSkin()->getGeometryName())
-				->setByteArray('GeometryData', $player->getSkin()->getGeometryData())
+				->setString('Name', $owner->getSkin()->getSkinId())
+				->setByteArray('Data', $owner->getSkin()->getSkinData())
+				->setByteArray('CapeData', $owner->getSkin()->getCapeData())
+				->setString('GeometryName', $owner->getSkin()->getGeometryName())
+				->setByteArray('GeometryData', $owner->getSkin()->getGeometryData())
 			);
 		}
         $pet = $this->createEntity($petType, $location, $nbt);

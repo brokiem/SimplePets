@@ -12,4 +12,6 @@ projects:
       - src: muqsit/InvMenu/InvMenu
         version: ^4.4.1
         branch: "4.0"
+      - src: brokiem-pm-pl/EasyUI/libEasyUI
+        version: 3.0.0
 ...

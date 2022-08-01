@@ -12,6 +12,13 @@ namespace brokiem\simplepets\command;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
+use EasyUI\element\Button;
+use EasyUI\element\Dropdown;
+use EasyUI\element\Input;
+use EasyUI\element\Option;
+use EasyUI\utils\FormResponse;
+use EasyUI\variant\CustomForm;
+use EasyUI\variant\SimpleForm;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
@@ -28,6 +35,57 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
         if (isset($args[0])) {
             switch (strtolower($args[0])) {
+                case "ui":
+                    if (!($sender instanceof Player)) {
+                        return;
+                    }
+
+                    if (!$sender->hasPermission("simplepets.ui")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
+                        return;
+                    }
+
+                    $form = new SimpleForm("Spawn Pet");
+
+                    foreach (SimplePets::getInstance()->getPetManager()->getRegisteredPets() as $type => $class) {
+                        $form->addButton(new Button($type, null, function(Player $player) use ($type) {
+                            $dropdown = new Dropdown("Pet type");
+                            $dropdown->addOption(new Option($type, $type));
+
+                            $form = new CustomForm("Spawn $type");
+                            $form->addElement("pet_name", new Input("Pet name"));
+                            $form->addElement("pet_type", $dropdown);
+
+                            $form->setSubmitListener(function(Player $player, FormResponse $response) {
+                                $pet_name = $response->getInputSubmittedText("pet_name") ?? $player->getName();
+                                $pet_type = $response->getDropdownSubmittedOptionId("pet_type");
+
+                                if ($pet_name === null) {
+                                    return;
+                                }
+
+                                if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()])) {
+                                    foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()] as $petName => $petId) {
+                                        $pet = $player->getServer()->getWorldManager()->findEntity($petId);
+
+                                        if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                            $pet->despawn();
+                                            SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
+                                        }
+                                    }
+                                }
+
+                                SimplePets::getInstance()->getPetManager()->spawnPet($player, $pet_type, $pet_name);
+
+                                $player->sendMessage("§b" . str_replace("Pet", " Pet", $pet_type) . " §awith the name §b" . $pet_name . " §ahas been successfully spawned");
+                            });
+
+                            $player->sendForm($form);
+                        }));
+                    }
+
+                    $sender->sendForm($form);
+                    break;
                 case "spawn":
                     if (!$sender->hasPermission("simplepets.spawn")) {
                         $sender->sendMessage("§cYou don't have permission to run this command");

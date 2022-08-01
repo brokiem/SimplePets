@@ -10,6 +10,8 @@ extensions:
   Core: '>=8.0'
 
 permissions:
+  simplepets.ui:
+    default: op
   simplepets.spawn:
     default: op
   simplepets.remove:

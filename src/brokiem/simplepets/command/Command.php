@@ -75,8 +75,10 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
                                         if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                                             $pet->despawn();
-                                            SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
                                         }
+
+                                        SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
+                                        SimplePets::getInstance()->getDatabaseManager()->removePet($player, $petName);
                                     }
                                 }
 

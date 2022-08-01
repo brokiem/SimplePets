@@ -18,6 +18,7 @@ use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\InteractPacket;
+use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
 use pocketmine\network\mcpe\protocol\PlayerInputPacket;
 use pocketmine\player\Player;
 
@@ -63,7 +64,10 @@ final class EventListener implements Listener {
             return;
         }
 
-        if ($packet instanceof PlayerInputPacket) {
+        if ($packet instanceof PlayerAuthInputPacket) {
+            $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+            $pet?->walk($packet->getMoveVecX(), $packet->getMoveVecZ(), $player);
+        } elseif ($packet instanceof PlayerInputPacket) {
             $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
             $pet?->walk($packet->motionX, $packet->motionY, $player);
         } elseif ($packet instanceof InteractPacket) {

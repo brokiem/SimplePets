@@ -332,8 +332,8 @@ final class PetManager {
         return $this->ridden_pet[$owner->getName()] ?? null;
     }
 
-    public function removeRiddenPet(Player $owner, BasePet|CustomPet $pet): void {
-        $this->ridden_pet[$owner->getName()] = $pet;
+    public function removeRiddenPet(Player $owner): void {
+        unset($this->ridden_pet[$owner->getName()]);
     }
 
     public function removeActivePet(Player $owner, string $petName): bool {

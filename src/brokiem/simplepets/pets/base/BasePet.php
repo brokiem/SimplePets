@@ -170,20 +170,18 @@ abstract class BasePet extends Living {
     }
 
     public function unlink(): void {
-        if ($this->rider !== null) {
-            if ($this->getRider() !== null) {
-                $this->getRider()->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, false);
-                $this->getRider()->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 0, 0));
+        if ($this->getRider() !== null) {
+            $this->getRider()->getNetworkProperties()->setGenericFlag(EntityMetadataFlags::RIDING, false);
+            $this->getRider()->getNetworkProperties()->setVector3(EntityMetadataProperties::RIDER_SEAT_POSITION, new Vector3(0, 0, 0));
 
-                $pk = new SetActorLinkPacket();
-                $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
-                $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
+            $pk = new SetActorLinkPacket();
+            $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
+            $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-                SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider(), $this);
-            }
-
-            $this->rider = null;
+            SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider());
         }
+
+        $this->rider = null;
     }
 
     public function getRider(): ?Player {

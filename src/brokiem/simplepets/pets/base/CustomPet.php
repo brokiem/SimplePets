@@ -182,7 +182,7 @@ abstract class CustomPet extends Human {
                 $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
                 $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-                SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider(), $this);
+                SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider());
             }
 
             $this->rider = null;

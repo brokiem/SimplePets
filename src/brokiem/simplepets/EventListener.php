@@ -81,8 +81,6 @@ final class EventListener implements Listener {
                 }
             }
         }
-
-        var_dump($packet->getName());
     }
 
     public function onTeleport(EntityTeleportEvent $event): void {

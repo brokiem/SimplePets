@@ -20,7 +20,7 @@ database:
   # The maximum number of simultaneous SQL queries
   # Recommended: 1 for sqlite, 2 for MySQL.
   # You may want to further increase this value if your MySQL connection is very slow.
-  worker-limit: 2
+  worker-limit: 1
 
 enable-inventory: true
 enable-riding: true

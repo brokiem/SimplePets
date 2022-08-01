@@ -2,7 +2,7 @@
 build-by-default: true
 branches:
   - master
-- broki-patch
+  - broki-patch
 
 projects:
   SimplePets:

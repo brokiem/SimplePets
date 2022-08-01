@@ -53,14 +53,19 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             $dropdown->addOption(new Option($type, $type));
 
                             $form = new CustomForm("Spawn $type");
-                            $form->addElement("pet_name", new Input("Pet name"));
                             $form->addElement("pet_type", $dropdown);
+                            $form->addElement("pet_name", new Input("Pet name"));
 
                             $form->setSubmitListener(function(Player $player, FormResponse $response) {
                                 $pet_name = $response->getInputSubmittedText("pet_name") ?? $player->getName();
                                 $pet_type = $response->getDropdownSubmittedOptionId("pet_type");
 
-                                if ($pet_name === null) {
+                                if ($pet_type === null) {
+                                    return;
+                                }
+
+                                if (!Player::isValidUserName($pet_name)) {
+                                    $player->sendMessage("Invalid pet name. Only supported [A-z] with max 16 length character;");
                                     return;
                                 }
 

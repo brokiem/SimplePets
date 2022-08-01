@@ -9,8 +9,10 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\manager;
 
+use brokiem\simplepets\pets\AllayPet;
 use brokiem\simplepets\pets\ArmorstandPet;
 use brokiem\simplepets\pets\ArrowPet;
+use brokiem\simplepets\pets\AxolotlPet;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\pets\BatPet;
@@ -92,6 +94,7 @@ use brokiem\simplepets\pets\VillagerPet;
 use brokiem\simplepets\pets\Villagerv2Pet;
 use brokiem\simplepets\pets\VindicatorPet;
 use brokiem\simplepets\pets\WanderingtraderPet;
+use brokiem\simplepets\pets\WardenPet;
 use brokiem\simplepets\pets\WitchPet;
 use brokiem\simplepets\pets\WitherPet;
 use brokiem\simplepets\pets\WitherskeletonPet;
@@ -120,6 +123,9 @@ use pocketmine\world\World;
 final class PetManager {
 
     private array $default_pets = [
+        "AllayPet" => AllayPet::class,
+        "AxolotlPet" => AxolotlPet::class,
+        "WardenPet" => WardenPet::class,
         "GoatPet" => GoatPet::class,
         "ArmorstandPet" => ArmorstandPet::class,
         "ArrowPet" => ArrowPet::class,

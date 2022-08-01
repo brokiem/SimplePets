@@ -337,6 +337,8 @@ final class PetManager {
     }
 
     public function removeActivePet(Player $owner, string $petName): bool {
+        SimplePets::getInstance()->getPetManager()->removeRiddenPet($owner);
+
         if (isset($this->active_pets[$owner->getName()][$petName])) {
             unset($this->active_pets[$owner->getName()][$petName]);
             return true;

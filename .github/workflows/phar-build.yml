@@ -1,0 +1,99 @@
+name: Plugin PHAR builder
+
+on: [ push ]
+
+jobs:
+  build:
+    name: Build PHAR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Creating directories
+        run: |
+          mkdir target
+          mkdir plugin
+
+      - name: Moving files to plugin folder
+        run: |
+          mv resources src plugin.yml -t plugin
+
+      - name: Setup PHP 8.0
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          ini-values: phar.readonly=0
+
+      - name: Read plugin name
+        id: plugin-name
+        uses: KJ002/read-yaml@main
+        with:
+          file: './plugin/plugin.yml'
+          key-path: '["name"]'
+
+      - name: Download ConsoleScript.php
+        run: wget https://gist.githubusercontent.com/brokiem/3a407df6372ed1410cfb38cf99762a3f/raw/e740766a0dda15bad37cc8ae1e82863331e38da0/ConsoleScript.php
+
+      - name: Build Plugin PHAR
+        run: php ConsoleScript.php --make / --relative plugin --out target/${{ steps.plugin-name.outputs.data }}.phar
+
+      - name: "Check libraries.yml file existence"
+        id: libraries-file
+        uses: andstor/file-existence-action@v1
+        with:
+          files: ".libraries.yml"
+
+      - name: Read .libraries.yml
+        if: steps.libraries-file.outputs.files_exists == 'true'
+        id: libraries
+        uses: KJ002/read-yaml@main
+        with:
+          file: './.libraries.yml'
+          key-path: '["libs"]'
+
+      - name: Download virions
+        if: steps.libraries-file.outputs.files_exists == 'true'
+        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("wget $lib"); }'
+
+      - name: Inject virions to plugin phar
+        if: steps.libraries-file.outputs.files_exists == 'true'
+        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("php " . basename($lib) . " target/${{ steps.plugin-name.outputs.data }}.phar"); }'
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.plugin-name.outputs.data }}.phar
+          path: target/${{ steps.plugin-name.outputs.data }}.phar
+
+  prepare-release:
+    name: Make release
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+
+      - name: Read plugin name
+        id: plugin-name
+        uses: KJ002/read-yaml@main
+        with:
+          file: './plugin.yml'
+          key-path: '["name"]'
+
+      - name: Read plugin version
+        id: plugin-version
+        uses: KJ002/read-yaml@main
+        with:
+          file: './plugin.yml'
+          key-path: '["version"]'
+
+      - name: Create and publish release
+        uses: marvinpinto/action-automatic-releases@v1.1.1
+        with:
+          automatic_release_tag: "${{ steps.plugin-version.outputs.data }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          title: "${{ steps.plugin-name.outputs.data }} v${{ steps.plugin-version.outputs.data }}"
+          files: |
+            ${{ steps.plugin-name.outputs.data }}.phar
+          prerelease: false

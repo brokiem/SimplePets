@@ -14,6 +14,7 @@ use brokiem\simplepets\pets\base\CustomPet;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
@@ -83,10 +84,18 @@ final class EventListener implements Listener {
         }
     }
 
+    public function onDeath(PlayerDeathEvent $event): void {
+        $player = $event->getPlayer();
+
+        SimplePets::getInstance()->getPetManager()->removeRiddenPet($player);
+    }
+
     public function onTeleport(EntityTeleportEvent $event): void {
         $entity = $event->getEntity();
 
         if ($entity instanceof Player) {
+            SimplePets::getInstance()->getPetManager()->removeRiddenPet($entity);
+
             if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
                 foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
                     $pet = $entity->getServer()->getWorldManager()->findEntity($petId);

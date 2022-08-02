@@ -262,36 +262,6 @@ abstract class BasePet extends Living {
         $this->updateMovement();
     }
 
-    public function updateMotion(float $x, float $y): void {
-        //(1 if only one button, 0.7 if two)
-        //+y = forward. (+1/+0.7)
-        //-y = backward. (-1/-0.7)
-        //+x = left (+1/+0.7)
-        //-x = right (-1/-0.7)
-        if ($x != 0) {
-            if ($x > 0) {
-                $this->getLocation()->yaw -= $x * 2;
-            }
-            if ($x < 0) {
-                $this->getLocation()->yaw -= $x * 2;
-            }
-            $this->motion = $this->getDirectionVector();
-        }
-
-        if ($y > 0) {
-            //forward
-            $this->motion = $this->getDirectionVector()->multiply($y * 2);
-            $this->getLocation()->yaw = $this->getRider()?->getLocation()->yaw;
-        } elseif ($y < 0) {
-            //reverse
-            $this->motion = $this->getDirectionVector()->multiply($y * 2);
-        }
-
-        if ($this->shouldJump()) {
-            $this->jump();
-        }
-    }
-
     public function flagForDespawn(): void {
         $this->saveNBT();
 

@@ -66,11 +66,15 @@ final class EventListener implements Listener {
         }
 
         if ($packet instanceof PlayerAuthInputPacket) {
-            $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
-            $pet?->updateMotion($packet->getMoveVecX(), $packet->getMoveVecZ());
+            if ((int)$packet->getMoveVecX() !== 0 and (int)$packet->getMoveVecZ() !== 0) {
+                $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+                $pet?->walk($packet->getMoveVecX(), $packet->getMoveVecZ(), $player);
+            }
         } elseif ($packet instanceof PlayerInputPacket) {
-            $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
-            $pet?->updateMotion($packet->motionX, $packet->motionY);
+            if ((int)$packet->motionX !== 0 and (int)$packet->motionY !== 0) {
+                $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+                $pet?->walk($packet->motionX, $packet->motionY, $player);
+            }
         } elseif ($packet instanceof InteractPacket) {
             if ($packet->action === InteractPacket::ACTION_LEAVE_VEHICLE) {
                 $entity = $player->getServer()->getWorldManager()->findEntity($packet->targetActorRuntimeId);

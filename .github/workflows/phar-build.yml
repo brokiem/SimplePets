@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Creating directories
         run: |
           mkdir target
@@ -31,7 +32,7 @@ jobs:
           key-path: '["name"]'
 
       - name: Download ConsoleScript.php
-        run: wget https://gist.githubusercontent.com/brokiem/3a407df6372ed1410cfb38cf99762a3f/raw/e740766a0dda15bad37cc8ae1e82863331e38da0/ConsoleScript.php
+        run: wget https://gist.githubusercontent.com/brokiem/3a407df6372ed1410cfb38cf99762a3f/raw/3f7e65b169a13bff5f2ec91669f9b474cf25a6cc/ConsoleScript.php
 
       - name: Build Plugin PHAR
         run: php ConsoleScript.php --make / --relative plugin --out target/${{ steps.plugin-name.outputs.data }}.phar
@@ -57,6 +58,9 @@ jobs:
       - name: Inject virions to plugin phar
         if: steps.libraries-file.outputs.files_exists == 'true'
         run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("php " . basename($lib) . " target/${{ steps.plugin-name.outputs.data }}.phar"); }'
+
+      - name: Compressing phar with GZ
+        run: php -r '(new \Phar("./target/${{ steps.plugin-name.outputs.data }}.phar"))->compressFiles(\Phar::GZ);'
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
@@ -89,7 +93,7 @@ jobs:
           key-path: '["version"]'
 
       - name: Create and publish release
-        uses: marvinpinto/action-automatic-releases@v1.1.1
+        uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           automatic_release_tag: "${{ steps.plugin-version.outputs.data }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"

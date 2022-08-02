@@ -1,27 +1,27 @@
-name: Plugin PHAR builder
+name: CI
 
 on: [ push ]
 
 jobs:
   build:
-    name: Build PHAR
+    name: Build plugin
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Creating directories
+      - name: Prepare directories
         run: |
           mkdir target
           mkdir plugin
 
-      - name: Moving files to plugin folder
+      - name: Move files to plugin folder
         run: |
           mv resources src plugin.yml -t plugin
 
-      - name: Setup PHP 8.0
+      - name: Setup PHP 8.1
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
+          php-version: '8.1'
           ini-values: phar.readonly=0
 
       - name: Read plugin name
@@ -31,19 +31,19 @@ jobs:
           file: './plugin/plugin.yml'
           key-path: '["name"]'
 
-      - name: Download ConsoleScript.php
+      - name: Download ConsoleScript
         run: wget https://gist.githubusercontent.com/brokiem/3a407df6372ed1410cfb38cf99762a3f/raw/3f7e65b169a13bff5f2ec91669f9b474cf25a6cc/ConsoleScript.php
 
-      - name: Build Plugin PHAR
+      - name: Build plugin
         run: php ConsoleScript.php --make / --relative plugin --out target/${{ steps.plugin-name.outputs.data }}.phar
 
-      - name: "Check libraries.yml file existence"
+      - name: Check libraries file
         id: libraries-file
         uses: andstor/file-existence-action@v1
         with:
           files: ".libraries.yml"
 
-      - name: Read .libraries.yml
+      - name: Read libraries
         if: steps.libraries-file.outputs.files_exists == 'true'
         id: libraries
         uses: KJ002/read-yaml@main
@@ -53,14 +53,14 @@ jobs:
 
       - name: Download virions
         if: steps.libraries-file.outputs.files_exists == 'true'
-        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("wget $lib"); }'
+        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("wget $lib"); echo "Downloaded virion " . basename($lib); }'
 
-      - name: Inject virions to plugin phar
+      - name: Inject virions
         if: steps.libraries-file.outputs.files_exists == 'true'
-        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("php " . basename($lib) . " target/${{ steps.plugin-name.outputs.data }}.phar"); }'
+        run: php -r 'foreach(${{ steps.libraries.outputs.data }} as $lib){ exec("php " . basename($lib) . " target/${{ steps.plugin-name.outputs.data }}.phar"); echo "\nInjected virion " . basename($lib); }'
 
-      - name: Compressing phar with GZ
-        run: php -r '(new \Phar("./target/${{ steps.plugin-name.outputs.data }}.phar"))->compressFiles(\Phar::GZ);'
+      - name: Compress phar
+        run: php -r '(new \Phar("./target/${{ steps.plugin-name.outputs.data }}.phar"))->compressFiles(\Phar::GZ); echo "\nFinished compression";'
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
@@ -72,6 +72,7 @@ jobs:
     name: Make release
     needs: [ build ]
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[release]')
     steps:
       - uses: actions/checkout@v2
 

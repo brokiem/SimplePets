@@ -66,12 +66,12 @@ final class EventListener implements Listener {
         }
 
         if ($packet instanceof PlayerAuthInputPacket) {
-            if ((int)$packet->getMoveVecX() !== 0 and (int)$packet->getMoveVecZ() !== 0) {
+            if ($packet->getMoveVecX() !== 0.0 and $packet->getMoveVecZ() !== 0.0) {
                 $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
                 $pet?->walk($packet->getMoveVecX(), $packet->getMoveVecZ(), $player);
             }
         } elseif ($packet instanceof PlayerInputPacket) {
-            if ((int)$packet->motionX !== 0 and (int)$packet->motionY !== 0) {
+            if ($packet->motionX !== 0.0 and $packet->motionY !== 0.0) {
                 $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
                 $pet?->walk($packet->motionX, $packet->motionY, $player);
             }

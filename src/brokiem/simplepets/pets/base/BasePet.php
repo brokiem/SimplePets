@@ -221,7 +221,9 @@ abstract class BasePet extends Living {
 
     // hehe thx blockpet
     public function walk(float $motionX, float $motionZ, Player $rider): void {
-        $this->setRotation($rider->getLocation()->yaw, $rider->getLocation()->pitch);
+        $this->location->yaw = $rider->getLocation()->yaw;
+        $this->location->pitch = $rider->getLocation()->pitch;
+        $this->scheduleUpdate();
 
         $direction_plane = $this->getDirectionPlane();
         $x = $direction_plane->x / 2.5;

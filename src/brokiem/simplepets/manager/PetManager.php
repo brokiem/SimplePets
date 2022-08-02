@@ -270,7 +270,7 @@ final class PetManager {
 
     public function spawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $location = clone $owner->getLocation();
-        $location->y = $owner->getLocation()->getY() + 1;
+        ++$location->y;
 
         $nbt = $this->createBaseNBT($location);
         $nbt->setString("petOwner", $owner->getXuid())
@@ -296,7 +296,7 @@ final class PetManager {
 
     public function respawnPet(Player $owner, string $petType, string $petName, float $petSize = 1, bool $petBaby = false, int $petVis = PetManager::VISIBLE_TO_EVERYONE, bool $enableInv = true, bool $enableRiding = true, ?string $extraData = "null"): void {
         $location = clone $owner->getLocation();
-        $location->y = $owner->getLocation()->getY() + 1;
+        ++$location->y;
 
         $nbt = $this->createBaseNBT($location);
         $nbt->setString("petOwner", $owner->getXuid())

@@ -108,7 +108,7 @@ final class EventListener implements Listener {
 
                     if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                         $location = clone $entity->getLocation();
-                        $location->y = $entity->getLocation()->getY() + 1;
+                        ++$location->y;
 
                         $pet->teleport($location);
                     }

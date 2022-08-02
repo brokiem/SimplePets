@@ -165,7 +165,7 @@ abstract class BasePet extends Living {
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);
         $rider->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-        SimplePets::getInstance()->getPetManager()->addRiddenPet($rider, $this);
+        PetManager::getInstance()->addRiddenPet($rider, $this);
         $this->rider = $rider->getXuid();
     }
 
@@ -178,7 +178,7 @@ abstract class BasePet extends Living {
             $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
             $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-            SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider());
+            PetManager::getInstance()->removeRiddenPet($this->getRider());
         }
 
         $this->rider = null;

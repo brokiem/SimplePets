@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\database;
 
+use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
@@ -27,6 +28,10 @@ final class Database {
     public const SIMPLEPETS_SAVEPET = "simplepets.savepet";
     public const SIMPLEPETS_SET_VERSION = "simplepets.set-version";
     public const SIMPLEPETS_GETALLPETS = "simplepets.getallpets";
+
+    public function __construct() {
+        self::setInstance($this);
+    }
 
     public function registerPet(BasePet|CustomPet $pet): void {
         $db = SimplePets::getInstance()->getDatabase();
@@ -97,7 +102,7 @@ final class Database {
                 $enableRiding = $row["enableRiding"];
                 $extraData = $row["extraData"];
 
-                SimplePets::getInstance()->getPetManager()->respawnPet($owner, $type, $name, $size, (bool)$baby, $visibility, (bool)$enableInv, (bool)$enableRiding, $extraData);
+                PetManager::getInstance()->respawnPet($owner, $type, $name, $size, (bool)$baby, $visibility, (bool)$enableInv, (bool)$enableRiding, $extraData);
             }
         });
     }

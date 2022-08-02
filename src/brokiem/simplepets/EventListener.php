@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets;
 
+use brokiem\simplepets\database\Database;
+use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use pocketmine\event\entity\EntityDamageEvent;
@@ -29,19 +31,19 @@ final class EventListener implements Listener {
         $player = $event->getPlayer();
 
         SimplePets::getInstance()->addPlayer($player);
-        SimplePets::getInstance()->getDatabaseManager()->respawnPet($player);
+        Database::getInstance()->respawnPet($player);
     }
 
     public function onQuit(PlayerQuitEvent $event): void {
         $player = $event->getPlayer();
 
-        if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()])) {
-            foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()] as $petName => $petId) {
+        if (isset(PetManager::getInstance()->getActivePets()[$player->getName()])) {
+            foreach (PetManager::getInstance()->getActivePets()[$player->getName()] as $petName => $petId) {
                 $pet = $player->getServer()->getWorldManager()->findEntity($petId);
 
                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                     $pet->despawn();
-                    SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
+                    PetManager::getInstance()->removeActivePet($player, $petName);
                 }
             }
         }
@@ -67,12 +69,12 @@ final class EventListener implements Listener {
 
         if ($packet instanceof PlayerAuthInputPacket) {
             if ($packet->getMoveVecX() !== 0.0 or $packet->getMoveVecZ() !== 0.0) {
-                $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+                $pet = PetManager::getInstance()->getRiddenPet($player);
                 $pet?->walk($packet->getMoveVecX(), $packet->getMoveVecZ(), $player);
             }
         } elseif ($packet instanceof PlayerInputPacket) {
             if ($packet->motionX !== 0.0 or $packet->motionY !== 0.0) {
-                $pet = SimplePets::getInstance()->getPetManager()->getRiddenPet($player);
+                $pet = PetManager::getInstance()->getRiddenPet($player);
                 $pet?->walk($packet->motionX, $packet->motionY, $player);
             }
         } elseif ($packet instanceof InteractPacket) {
@@ -91,17 +93,17 @@ final class EventListener implements Listener {
     public function onDeath(PlayerDeathEvent $event): void {
         $player = $event->getPlayer();
 
-        SimplePets::getInstance()->getPetManager()->removeRiddenPet($player);
+        PetManager::getInstance()->removeRiddenPet($player);
     }
 
     public function onTeleport(EntityTeleportEvent $event): void {
         $entity = $event->getEntity();
 
         if ($entity instanceof Player) {
-            SimplePets::getInstance()->getPetManager()->removeRiddenPet($entity);
+            PetManager::getInstance()->removeRiddenPet($entity);
 
-            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()])) {
-                foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$entity->getName()] as $petName => $petId) {
+            if (isset(PetManager::getInstance()->getActivePets()[$entity->getName()])) {
+                foreach (PetManager::getInstance()->getActivePets()[$entity->getName()] as $petName => $petId) {
                     $pet = $entity->getServer()->getWorldManager()->findEntity($petId);
 
                     if ($pet instanceof BasePet || $pet instanceof CustomPet) {

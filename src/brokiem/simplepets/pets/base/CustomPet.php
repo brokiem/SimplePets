@@ -168,7 +168,7 @@ abstract class CustomPet extends Human {
         $pk->link = new EntityLink($this->getId(), $rider->getId(), EntityLink::TYPE_RIDER, false, true);
         $rider->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-        SimplePets::getInstance()->getPetManager()->addRiddenPet($rider, $this);
+        PetManager::getInstance()->addRiddenPet($rider, $this);
         $this->rider = $rider->getXuid();
     }
 
@@ -182,7 +182,7 @@ abstract class CustomPet extends Human {
                 $pk->link = new EntityLink($this->getId(), $this->getRider()->getId(), EntityLink::TYPE_REMOVE, false, true);
                 $this->getRider()->getServer()->broadcastPackets($this->getViewers(), [$pk]);
 
-                SimplePets::getInstance()->getPetManager()->removeRiddenPet($this->getRider());
+                PetManager::getInstance()->removeRiddenPet($this->getRider());
             }
 
             $this->rider = null;
@@ -352,8 +352,8 @@ abstract class CustomPet extends Human {
             $this->motion->x = 0;
             $this->motion->z = 0;
         } else {
-            $this->motion->x = 1 * 0.17 * ($x / (abs($x) + abs($z)));
-            $this->motion->z = 1 * 0.17 * ($z / (abs($x) + abs($z)));
+            $this->motion->x = 0.17 * ($x / (abs($x) + abs($z)));
+            $this->motion->z = 0.17 * ($z / (abs($x) + abs($z)));
         }
 
         $this->getLocation()->yaw = rad2deg(atan2(-$x, $z));

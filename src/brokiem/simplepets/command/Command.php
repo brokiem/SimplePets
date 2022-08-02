@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\command;
 
+use brokiem\simplepets\database\Database;
+use brokiem\simplepets\manager\PetManager;
 use brokiem\simplepets\pets\base\BasePet;
 use brokiem\simplepets\pets\base\CustomPet;
 use brokiem\simplepets\SimplePets;
@@ -47,7 +49,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
                     $form = new SimpleForm("Spawn Pet");
 
-                    foreach (SimplePets::getInstance()->getPetManager()->getRegisteredPets() as $type => $class) {
+                    foreach (PetManager::getInstance()->getRegisteredPets() as $type => $class) {
                         $form->addButton(new Button($type, null, function(Player $player) use ($type) {
                             $dropdown = new Dropdown("Pet type");
                             $dropdown->addOption(new Option($type, $type));
@@ -69,20 +71,20 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                     return;
                                 }
 
-                                if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()])) {
-                                    foreach (SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()] as $petName => $petId) {
+                                if (isset(PetManager::getInstance()->getActivePets()[$player->getName()])) {
+                                    foreach (PetManager::getInstance()->getActivePets()[$player->getName()] as $petName => $petId) {
                                         $pet = $player->getServer()->getWorldManager()->findEntity($petId);
 
                                         if ($pet instanceof BasePet || $pet instanceof CustomPet) {
                                             $pet->despawn();
                                         }
 
-                                        SimplePets::getInstance()->getPetManager()->removeActivePet($player, $petName);
-                                        SimplePets::getInstance()->getDatabaseManager()->removePet($player, $petName);
+                                        PetManager::getInstance()->removeActivePet($player, $petName);
+                                        Database::getInstance()->removePet($player, $petName);
                                     }
                                 }
 
-                                SimplePets::getInstance()->getPetManager()->spawnPet($player, $pet_type, $pet_name);
+                                PetManager::getInstance()->spawnPet($player, $pet_type, $pet_name);
 
                                 $player->sendMessage("§b" . str_replace("Pet", " Pet", $pet_type) . " §awith the name §b" . $pet_name . " §ahas been successfully spawned");
                             });
@@ -107,18 +109,18 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             return;
                         }
 
-                        if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
+                        if (isset(PetManager::getInstance()->getActivePets()[$player->getName()][$args[2]])) {
                             $sender->sendMessage("§c{$player->getName()} already have a pet with the name " . $args[2]);
                         } else {
-                            if (isset(SimplePets::getInstance()->getPetManager()->getRegisteredPets()[$args[2]])) {
+                            if (isset(PetManager::getInstance()->getRegisteredPets()[$args[2]])) {
                                 if (isset($args[4]) && is_numeric($args[4]) and (float)$args[4] > 0 and (float)$args[4] < 10) {
                                     if (isset($args[5]) && is_bool($args[5])) {
-                                        SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3], (float)$args[4], (bool)$args[5]);
+                                        PetManager::getInstance()->spawnPet($player, $args[2], $args[3], (float)$args[4], (bool)$args[5]);
                                     } else {
-                                        SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3], (float)$args[4]);
+                                        PetManager::getInstance()->spawnPet($player, $args[2], $args[3], (float)$args[4]);
                                     }
                                 } else {
-                                    SimplePets::getInstance()->getPetManager()->spawnPet($player, $args[2], $args[3]);
+                                    PetManager::getInstance()->spawnPet($player, $args[2], $args[3]);
                                 }
 
                                 $sender->sendMessage("§b" . str_replace("Pet", " Pet", $args[2]) . " §awith the name §b" . $args[3] . " §ahas been successfully spawned to §b" . $player->getName());
@@ -132,37 +134,37 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                     break;
                 case "remove":
                 case "delete":
-                if (!$sender->hasPermission("simplepets.remove")) {
-                    $sender->sendMessage("§cYou don't have permission to run this command");
-                    return;
-                }
-
-                if (isset($args[1], $args[2])) {
-                    $player = Server::getInstance()->getPlayerByPrefix($args[1]);
-
-                    if ($player === null) {
-                        $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
+                    if (!$sender->hasPermission("simplepets.remove")) {
+                        $sender->sendMessage("§cYou don't have permission to run this command");
                         return;
                     }
 
-                    if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
-                        $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]];
-                        $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+                    if (isset($args[1], $args[2])) {
+                        $player = Server::getInstance()->getPlayerByPrefix($args[1]);
 
-                        if ($pet instanceof BasePet || $pet instanceof CustomPet) {
-                            $pet->despawn();
+                        if ($player === null) {
+                            $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
+                            return;
                         }
 
-                        SimplePets::getInstance()->getPetManager()->removeActivePet($player, $args[2]);
-                        SimplePets::getInstance()->getDatabaseManager()->removePet($player, $args[2]);
-                        $sender->sendMessage("§aPet with the name §b" . $args[2] . " §afrom §b{$player->getName()} §ahas been successfully removed");
+                        if (isset(PetManager::getInstance()->getActivePets()[$player->getName()][$args[2]])) {
+                            $id = PetManager::getInstance()->getActivePets()[$player->getName()][$args[2]];
+                            $pet = Server::getInstance()->getWorldManager()->findEntity($id);
+
+                            if ($pet instanceof BasePet || $pet instanceof CustomPet) {
+                                $pet->despawn();
+                            }
+
+                            PetManager::getInstance()->removeActivePet($player, $args[2]);
+                            Database::getInstance()->removePet($player, $args[2]);
+                            $sender->sendMessage("§aPet with the name §b" . $args[2] . " §afrom §b{$player->getName()} §ahas been successfully removed");
+                        } else {
+                            $sender->sendMessage("§a{$player->getName()} don't have a pet with the name §b" . $args[2]);
+                        }
                     } else {
-                        $sender->sendMessage("§a{$player->getName()} don't have a pet with the name §b" . $args[2]);
+                        $sender->sendMessage("§cUsage: /spet remove <player> <petName>");
                     }
-                } else {
-                    $sender->sendMessage("§cUsage: /spet remove <player> <petName>");
-                }
-                break;
+                    break;
                 case "inventory":
                 case "inv":
                     if (!SimplePets::getInstance()->getConfig()->get("enable-inventory")) {
@@ -182,8 +184,8 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                             if ($player === null) {
                                 $sender->sendMessage("§cPlayer with name $args[1] doesnt exists");
                             } else {
-                                if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]])) {
-                                    $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$player->getName()][$args[2]];
+                                if (isset(PetManager::getInstance()->getActivePets()[$player->getName()][$args[2]])) {
+                                    $id = PetManager::getInstance()->getActivePets()[$player->getName()][$args[2]];
                                     $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
                                     if ($pet instanceof BasePet || $pet instanceof CustomPet) {
@@ -201,8 +203,8 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 return;
                             }
 
-                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
-                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
+                            if (isset(PetManager::getInstance()->getActivePets()[$sender->getName()][$args[1]])) {
+                                $id = PetManager::getInstance()->getActivePets()[$sender->getName()][$args[1]];
                                 $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
@@ -233,8 +235,8 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
                     if ($sender instanceof Player) {
                         if (isset($args[1])) {
-                            if (isset(SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]])) {
-                                $id = SimplePets::getInstance()->getPetManager()->getActivePets()[$sender->getName()][$args[1]];
+                            if (isset(PetManager::getInstance()->getActivePets()[$sender->getName()][$args[1]])) {
+                                $id = PetManager::getInstance()->getActivePets()[$sender->getName()][$args[1]];
                                 $pet = Server::getInstance()->getWorldManager()->findEntity($id);
 
                                 if ($pet instanceof BasePet || $pet instanceof CustomPet) {
@@ -260,7 +262,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
 
                     $message = "§bSimplePets pet list:\n";
 
-                    foreach (SimplePets::getInstance()->getPetManager()->getRegisteredPets() as $type => $class) {
+                    foreach (PetManager::getInstance()->getRegisteredPets() as $type => $class) {
                         $message .= "§b- §a" . $type . "\n";
                     }
 

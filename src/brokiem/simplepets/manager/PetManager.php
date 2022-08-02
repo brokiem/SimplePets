@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace brokiem\simplepets\manager;
 
+use brokiem\simplepets\database\Database;
 use brokiem\simplepets\pets\AllayPet;
 use brokiem\simplepets\pets\ArmorstandPet;
 use brokiem\simplepets\pets\ArrowPet;
@@ -106,7 +107,6 @@ use brokiem\simplepets\pets\ZombiePet;
 use brokiem\simplepets\pets\ZombiepigmanPet;
 use brokiem\simplepets\pets\ZombievillagerPet;
 use brokiem\simplepets\pets\Zombievillagerv2Pet;
-use brokiem\simplepets\SimplePets;
 use pocketmine\entity\Entity;
 use pocketmine\entity\EntityDataHelper;
 use pocketmine\entity\EntityFactory;
@@ -118,9 +118,11 @@ use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\player\Player;
+use pocketmine\utils\SingletonTrait;
 use pocketmine\world\World;
 
 final class PetManager {
+    use SingletonTrait;
 
     private array $default_pets = [
         "AllayPet" => AllayPet::class,
@@ -229,6 +231,7 @@ final class PetManager {
     public const INVISIBLE_TO_EVERYONE = 3;
 
     public function __construct() {
+        self::setInstance($this);
         foreach ($this->default_pets as $type => $class) {
             self::registerEntity($class, [$type]);
             $this->registerPet($type, $class);
@@ -287,7 +290,7 @@ final class PetManager {
             $pet->spawnToAll();
 
             $this->active_pets[$owner->getName()][$pet->getPetName()] = $pet->getId();
-            SimplePets::getInstance()->getDatabaseManager()->registerPet($pet);
+            Database::getInstance()->registerPet($pet);
         }
     }
 
@@ -337,7 +340,7 @@ final class PetManager {
     }
 
     public function removeActivePet(Player $owner, string $petName): bool {
-        SimplePets::getInstance()->getPetManager()->removeRiddenPet($owner);
+        $this->removeRiddenPet($owner);
 
         if (isset($this->active_pets[$owner->getName()][$petName])) {
             unset($this->active_pets[$owner->getName()][$petName]);

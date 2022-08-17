@@ -79,12 +79,12 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                             $pet->despawn();
                                         }
 
-                                        PetManager::getInstance()->removeActivePet($player, $petName);
-                                        Database::getInstance()->removePet($player, $petName);
+                                        PetManager::getInstance()->removeActivePet($player, (string)$petName);
+                                        Database::getInstance()->removePet($player, (string)$petName);
                                     }
                                 }
 
-                                PetManager::getInstance()->spawnPet($player, $pet_type, $pet_name);
+                                PetManager::getInstance()->spawnPet($player, (string)$pet_type, (string)$pet_name);
 
                                 $player->sendMessage("§b" . str_replace("Pet", " Pet", $pet_type) . " §awith the name §b" . $pet_name . " §ahas been successfully spawned");
                             });
@@ -155,7 +155,7 @@ class Command extends \pocketmine\command\Command implements PluginOwned {
                                 $pet->despawn();
                             }
 
-                            PetManager::getInstance()->removeActivePet($player, $args[2]);
+                            PetManager::getInstance()->removeActivePet($player, (string)$args[2]);
                             Database::getInstance()->removePet($player, $args[2]);
                             $sender->sendMessage("§aPet with the name §b" . $args[2] . " §afrom §b{$player->getName()} §ahas been successfully removed");
                         } else {
